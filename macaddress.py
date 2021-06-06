@@ -329,7 +329,10 @@ def parse(string, *classes):
     Raises:
         ValueError: If the string could not be parsed as any of the
             given classes.
+        TypeError: If the string is not actually a string.
     """
+    if not isinstance(string, str):
+        return TypeError
     if not classes:
         return None
     address, cls = _parse(string, *classes)
