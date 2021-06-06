@@ -339,8 +339,8 @@ def parse(string, *classes):
     return cls(address)
 
 
-def _parse(input, *classes):
-    length = len(input)
+def _parse(string, *classes):
+    length = len(string)
     if length < 1:
         raise ValueError('hardware address cannot be an empty string')
     candidates = {}
@@ -353,7 +353,7 @@ def _parse(input, *classes):
     start = 0
     end = len(candidates)
     for index in range(length):
-        character = input[index]
+        character = string[index]
         if character in _HEX_DIGITS:
             address <<= 4
             address += int(character, 16)
@@ -363,7 +363,7 @@ def _parse(input, *classes):
         while start < end and candidates[end - 1][0][index] > character:
             end -= 1
         if start >= end:
-            raise _value_error(input, 'cannot be parsed as', *classes)
+            raise _value_error(string, 'cannot be parsed as', *classes)
     _, cls = candidates[start]
     offset = (4 - cls.size) & 3
     address >>= offset
