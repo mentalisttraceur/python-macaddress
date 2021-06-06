@@ -130,7 +130,7 @@ that start with the same bits next to each other sorting:
     ... ]
     >>> for x in sorted(some_hw_identifiers):
     ...     print(x)
-    ff-ee-00-01-02-03
-    ff-ee-dd
-    ff-ee-dd-01-02-03
-    ff-ee-dd-01-02-04
+    FF-EE-00-01-02-03
+    FF-EE-DD
+    FF-EE-DD-01-02-03
+    FF-EE-DD-01-02-04
