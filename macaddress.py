@@ -24,9 +24,15 @@ def _name(obj):
 
 def _value_error(value, error, *classes):
     class_names = [cls.__name__ for cls in classes]
-    if len(class_names) > 1:
+    number_of_classes = len(classes)
+    if number_of_classes < 2:
+        class_description = class_names[0]
+    elif number_of_classes == 2:
+        class_description = ' or '.join(class_names)
+    else:
         class_names[-1] = 'or ' + class_names[-1]
-    return ValueError(repr(value) + ' ' + error + ' ' + ', '.join(class_names))
+        class_description = ', '.join(class_names)
+    return ValueError(repr(value) + ' ' + error + ' ' + class_description)
 
 
 class HWAddress:
