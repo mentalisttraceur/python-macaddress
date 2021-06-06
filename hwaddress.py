@@ -8,6 +8,7 @@ __all__ = (
     'HWAddress', 'HWAddressPrefix',
     'OUI',
     'CDI32', 'CDI40',
+    'MAC',
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
@@ -187,9 +188,9 @@ class HWAddressPrefix(HWAddress):
     For example, an OUI is a prefix to MAC addresses, so ``OUI``
     is a subclass of this class, which enables checks like this:
 
-    >>> MACAddress('99-88-77-66-55-44') in OUI('99-88-77')
+    >>> MAC('99-88-77-66-55-44') in OUI('99-88-77')
     True
-    >>> MACAddress('99-88-77-66-55-44') in OUI('33-22-11')
+    >>> MAC('99-88-77-66-55-44') in OUI('33-22-11')
     False
     """
 
@@ -222,7 +223,7 @@ class _StartsWithOUI(HWAddress):
     @property
     def oui(self):
         """Get the OUI part of this hardware address."""
-        return OUI(self._address >> (self.size - OUI.size))
+        return OUI(int(self) >> (self.size - OUI.size))
 
 
 class CDI32(_StartsWithOUI):
@@ -272,7 +273,7 @@ class EUI48(_StartsWithOUI):
     )
 
 
-class MACAddress(EUI48):
+class MAC(EUI48):
     """MAC address. A subclass of EUI48.
 
     There is nothing wrong with using EUI48 for MAC addresses,
