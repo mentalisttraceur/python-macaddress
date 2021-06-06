@@ -1,7 +1,7 @@
 from hypothesis import given
 from hypothesis.strategies import composite, integers, lists, sampled_from
 
-from hwaddress import HWAddress, HWAddressPrefix, parse
+from hwaddress import HWAddress, parse
 
 
 @composite

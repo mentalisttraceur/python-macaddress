@@ -5,7 +5,7 @@
 
 
 __all__ = (
-    'HWAddress', 'HWAddressPrefix',
+    'HWAddress',
     'OUI',
     'CDI32', 'CDI40',
     'MAC',
@@ -179,31 +179,7 @@ def _aligned_address_integers(address1, address2):
         return (int(address1) << (size2 - size1), int(address2))
 
 
-class HWAddressPrefix(HWAddress):
-    """Base class for hardware address prefixes.
-
-    You should inherit from this instead of ``HWAddress`` when you
-    intend for your class to represent a prefix to other addresses.
-
-    For example, an OUI is a prefix to MAC addresses, so ``OUI``
-    is a subclass of this class, which enables checks like this:
-
-    >>> MAC('99-88-77-66-55-44') in OUI('99-88-77')
-    True
-    >>> MAC('99-88-77-66-55-44') in OUI('33-22-11')
-    False
-    """
-
-    __slots__ = ()
-
-    def __contains__(self, other):
-        """Check if a hardware address has this prefix as its first bytes."""
-        if not isinstance(other, HWAddress) or other.size > self.size:
-            return False
-        return self._address == other._address >> (other.size - self.size)
-
-
-class OUI(HWAddressPrefix):
+class OUI(HWAddress):
     """Organizationally Unique Identifier."""
 
     __slots__ = ()
