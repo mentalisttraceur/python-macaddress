@@ -1,7 +1,7 @@
 from hypothesis import given
 from hypothesis.strategies import composite, integers, lists, sampled_from
 
-from hwaddress import HWAddress, parse
+from hwaddress import *
 
 
 @composite
@@ -140,3 +140,9 @@ def _bits(address):
         address >>= 1
         size -= 1
     return ''.join(map(str, reversed(bits)))
+
+
+def test_provided_classes():
+    for Class in OUI, CDI32, CDI40, MAC, EUI48, EUI60, EUI64:
+        for format in Class.formats:
+            assert (Class.size + 3) >> 2 == sum(1 for x in format if x == 'x')
