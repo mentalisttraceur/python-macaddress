@@ -186,8 +186,8 @@ class HWAddressPrefix(HWAddress):
     You should inherit from this instead of ``HWAddress`` when you
     intend for your class to represent a prefix to other addresses.
 
-    For example, an OUI is a prefix to MAC addresses, so OUI is a
-    subclass of this class, and this enables checks like this:
+    For example, an OUI is a prefix to MAC addresses, so ``OUI``
+    is a subclass of this class, which enables checks like this:
 
     >>> MACAddress('99-88-77-66-55-44') in OUI('99-88-77')
     True
