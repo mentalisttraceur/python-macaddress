@@ -12,7 +12,7 @@ __all__ = (
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
