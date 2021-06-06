@@ -1,5 +1,5 @@
-hwaddress
-=========
+macaddress
+==========
 
 A module for handling hardware identifiers like MAC addresses.
 
@@ -27,7 +27,9 @@ specification <https://semver.org/spec/v2.0.0.html>`_.
 Installation
 ------------
 
-None for now.
+::
+
+    pip install macaddress
 
 
 Usage
@@ -37,7 +39,7 @@ Import:
 
 .. code:: python
 
-    import hwaddress
+    import macaddress
 
 Several classes are provided to parse common hardware addresses
 (``MAC``/``EUI48``, ``EUI64``, ``OUI``, etc), as well as
@@ -49,13 +51,13 @@ following formats:
 
 .. code:: python
 
-    >>> hwaddress.MAC('01-23-45-67-89-ab')
+    >>> macaddress.MAC('01-23-45-67-89-ab')
     MAC('01-23-45-67-89-AB')
-    >>> hwaddress.MAC('01:23:45:67:89:ab')
+    >>> macaddress.MAC('01:23:45:67:89:ab')
     MAC('01-23-45-67-89-AB')
-    >>> hwaddress.MAC('0123.4567.89ab')
+    >>> macaddress.MAC('0123.4567.89ab')
     MAC('01-23-45-67-89-AB')
-    >>> hwaddress.MAC('0123456789ab')
+    >>> macaddress.MAC('0123456789ab')
     MAC('01-23-45-67-89-AB')
 
 You can inspect what formats a hardware address class supports
@@ -63,7 +65,7 @@ by looking at its ``formats`` attribute:
 
 .. code:: python
 
-    >>> hwaddress.OUI.formats
+    >>> macaddress.OUI.formats
     ('xx-xx-xx', 'xx:xx:xx', 'xxxxxx')
 
 The first format listed in ``formats`` is also the one used
@@ -76,57 +78,57 @@ an OUI object:
 
 .. code:: python
 
-    >>> hwaddress.EUI48('01:02:03:04:05:06').oui
+    >>> macaddress.EUI48('01:02:03:04:05:06').oui
     OUI('01-02-03')
 
-All ``hwaddress`` classes support equality comparisons:
+All ``macaddress`` classes support equality comparisons:
 
 .. code:: python
 
-    >>> hwaddress.OUI('01-02-03') == hwaddress.OUI('01:02:03')
+    >>> macaddress.OUI('01-02-03') == macaddress.OUI('01:02:03')
     True
-    >>> hwaddress.OUI('01-02-03') == hwaddress.OUI('ff-ee-dd')
+    >>> macaddress.OUI('01-02-03') == macaddress.OUI('ff-ee-dd')
     False
-    >>> hwaddress.OUI('01-02-03') == hwaddress.CDI32('01-02-03-04')
+    >>> macaddress.OUI('01-02-03') == macaddress.CDI32('01-02-03-04')
     False
-    >>> hwaddress.OUI('01-02-03') == hwaddress.CDI32('01-02-03-04').oui
+    >>> macaddress.OUI('01-02-03') == macaddress.CDI32('01-02-03-04').oui
     True
 
-All ``hwaddress`` classes can be initialized with raw bytes
+All ``macaddress`` classes can be initialized with raw bytes
 or raw integers representing their value instead of strings:
 
 .. code:: python
 
-    >>> hwaddress.MAC(b'abcdef')
+    >>> macaddress.MAC(b'abcdef')
     MAC('61-62-63-64-65-66')
-    >>> hwaddress.MAC(0x010203ffeedd)
+    >>> macaddress.MAC(0x010203ffeedd)
     MAC('01-02-03-FF-EE-DD')
-    >>> hwaddress.MAC(1)
+    >>> macaddress.MAC(1)
     MAC('00-00-00-00-00-01')
-    >>> hwaddress.OUI(b'abc')
+    >>> macaddress.OUI(b'abc')
     OUI('61-62-63')
-    >>> hwaddress.OUI(0x010203)
+    >>> macaddress.OUI(0x010203)
     OUI('01-02-03')
-    >>> hwaddress.OUI(1)
+    >>> macaddress.OUI(1)
     OUI('00-00-01')
 
 If any of the values passed to the constructors are invalid,
 the constructors raise a ``TypeError`` or a ``ValueError``
 as appropriate.
 
-All ``hwaddress`` classes also support total ordering. The
+All ``macaddress`` classes also support total ordering. The
 comparisons are intended to intuitively put identifiers
 that start with the same bits next to each other sorting:
 
 .. code:: python
 
-    >>> some_hw_identifiers = [
+    >>> some_values = [
     ...     MAC('ff-ee-dd-01-02-03'),
     ...     MAC('ff-ee-00-99-88-77'),
     ...     MAC('ff-ee-dd-01-02-04'),
     ...     OUI('ff-ee-dd'),
     ... ]
-    >>> for x in sorted(some_hw_identifiers):
+    >>> for x in sorted(some_values):
     ...     print(x)
     FF-EE-00-01-02-03
     FF-EE-DD

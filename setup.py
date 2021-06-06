@@ -7,7 +7,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-from hwaddress import __doc__, __version__
+from macaddress import __doc__, __version__
 
 project_directory = os.path.abspath(os.path.dirname(__file__))
 readme_path = os.path.join(project_directory, 'README.rst')
@@ -19,12 +19,12 @@ finally:
     readme_file.close()
 
 setup(
-    name='hwaddress',
+    name='macaddress',
     version=__version__,
     description=__doc__.split('\n')[0],
     long_description=long_description,
     license='0BSD',
-    url='https://github.com/mentalisttraceur/python-hwaddress',
+    url='https://github.com/mentalisttraceur/python-macaddress',
     author='Alexander Kozhevnikov',
     author_email='mentalisttraceur@gmail.com',
     classifiers=[
@@ -32,5 +32,5 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
-    py_modules=['hwaddress'],
+    py_modules=['macaddress'],
 )
