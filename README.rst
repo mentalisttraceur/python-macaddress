@@ -27,9 +27,7 @@ specification <https://semver.org/spec/v2.0.0.html>`_.
 Installation
 ------------
 
-::
-
-    pip install hwaddress
+None for now.
 
 
 Usage
