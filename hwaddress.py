@@ -169,15 +169,13 @@ class HWAddress:
         return this > that or (this == that and self.size >= other.size)
 
 
-def _aligned_address_integers(instance1, instance2):
-    address1 = instance1._address
-    address2 = instance2._address
-    size1 = instance1.size
-    size2 = instance2.size
+def _aligned_address_integers(address1, address2):
+    size1 = address1.size
+    size2 = address2.size
     if size1 > size2:
-        return (address1, address2 << (size1 - size2))
+        return (int(address1), int(address2) << (size1 - size2))
     else:
-        return (address1 << (size2 - size1), address2)
+        return (int(address1) << (size2 - size1), int(address2))
 
 
 class HWAddressPrefix(HWAddress):
