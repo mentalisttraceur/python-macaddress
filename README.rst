@@ -41,11 +41,20 @@ Import:
 
     import macaddress
 
-Several classes are provided to parse common hardware addresses
-(``MAC``/``EUI48``, ``EUI64``, ``OUI``, etc), as well as
-several less common ones (``EUI60``, ``CDI32``, etc). They each
-support several common formats.
+Classes are provided for common hardware identifier
+types (``MAC``/``EUI48``, ``EUI64``, ``OUI``, and
+so on), as well as several less common ones. Others
+might be added later. You can define ones that you
+need in your code with just a few lines of code.
 
+
+Parse or Validate String
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+When only one address type is valid:
+````````````````````````````````````
+
+All provided classes support the standard and common formats.
 For example, the ``EUI48`` and ``MAC`` classes support the
 following formats:
 
@@ -68,18 +77,204 @@ by looking at its ``formats`` attribute:
     >>> macaddress.OUI.formats
     ('xx-xx-xx', 'xx:xx:xx', 'xxxxxx')
 
-The first format listed in ``formats`` is also the one used
-when stringifying (``str``) or representing (``repr``) the
-object.
+Each ``x`` in the format string matches one hexadecimal
+"digit", and all other characters are matched literally.
+
+If the string does not match one of the formats, a
+``ValueError`` is raised:
+
+.. code:: python
+
+    >>> macaddress.MAC('foo bar')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/home/user/code/m/macaddress.py", line 84, in __init__
+        self._address, _ = _parse(address, type(self))
+      File "/home/user/code/m/macaddress.py", line 357, in _parse
+        raise _value_error(input, 'cannot be parsed as', *classes)
+    ValueError: 'foo bar' cannot be parsed as MAC
+
+If you need to parse in a format that isn't supported,
+you can define a subclass and add the format:
+
+.. code:: python
+
+    >>> class MACAllowsTrailingDelimiters(macaddress.MAC):
+    ...     formats = macaddress.MAC.formats + (
+    ...         'xx-xx-xx-xx-xx-xx-',
+    ...         'xx:xx:xx:xx:xx:xx:',
+    ...         'xxxx.xxxx.xxxx.',
+    ...         'xxxxxxxxxxxx',
+    ...     )
+    ... 
+    >>> MACAllowsTrailingDelimiters('01-02-03-04-05-06-')
+    MACAllowsTrailingDelimiters('01-02-03-04-05-06')
+
+When multiple address types are valid:
+``````````````````````````````````````
+
+There is also a ``parse`` function for when you have a string
+which might be one of several classes:
+
+.. code:: python
+
+    >>> macaddress.parse('01:02:03', macaddress.OUI, macaddress.MAC)
+    OUI('01-02-03')
+    >>> macaddress.parse('01:02:03:04:05:06', macaddress.OUI, macaddress.MAC)
+    MAC('01-02-03-04-05-06')
+    >>> macaddress.parse('010203040506', macaddress.EUI64, macaddress.EUI48)
+    EUI48('01-02-03-04-05-06')
+    >>> macaddress.parse('0102030405060708', macaddress.EUI64, macaddress.EUI48)
+    EUI64('01-02-03-04-05-06-07-08')
+
+Note that the message of the ``ValueError`` tries to be helpful
+to humans by mentioning what classes you tried to parse it as:
+
+.. code:: python
+
+    >>> macaddress.parse('x', macaddress.MAC, macaddress.OUI, macaddress.EUI64)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/home/user/code/m/macaddress.py", line 335, in parse
+        address, cls = _parse(string, *classes)
+      File "/home/user/code/m/macaddress.py", line 363, in _parse
+        raise _value_error(input, 'cannot be parsed as', *classes)
+    ValueError: 'x' cannot be parsed as MAC, OUI, or EUI64
+
+
+Parse from Bytes
+~~~~~~~~~~~~~~~~
+
+All ``macaddress`` classes can be constructed from raw bytes:
+
+.. code:: python
+
+    >>> macaddress.MAC(b'abcdef')
+    MAC('61-62-63-64-65-66')
+    >>> macaddress.OUI(b'abc')
+    OUI('61-62-63')
+
+If the byte string is the wrong size, a ``ValueError`` is raised:
+
+.. code:: python
+
+    >>> macaddress.MAC(b'\x01\x02\x03')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/home/user/code/m/macaddress.py", line 86, in __init__
+        raise _value_error(address, 'has wrong length for', type(self))
+    ValueError: b'\x01\x02\x03' has wrong length for MAC
+
+
+Parse from Integers
+~~~~~~~~~~~~~~~~~~~
+
+All ``macaddress`` classes can be constructed from raw integers:
+
+.. code:: python
+
+    >>> macaddress.MAC(0x010203ffeedd)
+    MAC('01-02-03-FF-EE-DD')
+    >>> macaddress.OUI(0x010203)
+    OUI('01-02-03')
+
+Note that the least-significant bit of the integer value maps
+to the last bit in the address type, so the same integer has
+a different meaning depending on the class you use it with:
+
+.. code:: python
+
+    >>> macaddress.MAC(1)
+    MAC('00-00-00-00-00-01')
+    >>> macaddress.OUI(1)
+    OUI('00-00-01')
+
+If the integer is too large for the hardware identifier class
+that you're trying to construct, a ``ValueError`` is raised:
+
+.. code:: python
+
+    >>> macaddress.OUI(1_000_000_000)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/home/user/code/m/macaddress.py", line 78, in __init__
+        raise _value_error(address, 'is too big for', type(self))
+    ValueError: 1000000000 is too big for OUI
+
+
+Get as String
+~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> mac = macaddress.MAC('01-02-03-04-05-06')
+    >>> str(mac)
+    01-02-03-04-05-06
+
+The first format listed in ``formats`` is used when
+stringifying the object. If you want to use a
+different format, you can override the ``formats``
+attribute on the instance, or on a subclass:
+
+.. code:: python
+
+    >>> mac.formats = ('xx:xx:xx:xx:xx:xx',)
+    >>> str(mac)
+    01-02-03-04-05-06
+
+    >>> class MACWithColonsByDefault(macaddress.MAC):
+    ...     formats = ('xx:xx:xx:xx:xx:xx',) + macaddress.MAC.formats
+    ... 
+    >>> MACWithColonsByDefault('ab:cd:ef:01:02:03')
+    MACWithColonsByDefault('AB:CD:EF:01:02:03')
+    >>> str(MACWithColonsByDefault('ab-cd-ef-01-02-03'))
+    AB:CD:EF:01:02:03
+
+Note that appending the original ``formats``
+tuple to the new custom formats ensures that
+you can still *parse* all the valid formats.
+
+
+Get as Bytes
+~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> mac = macaddress.MAC('61-62-63-04-05-06')
+    >>> bytes(mac)
+    b'abc\x04\x05\x06'
+
+
+Get as Integer
+~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> mac = macaddress.MAC('01-02-03-04-05-06')
+    >>> int(mac)
+    1108152157446
+    >>> int(mac) == 0x010203040506
+    True
+
+
+Get the OUI
+~~~~~~~~~~~
 
 Most classes supplied by this module have the ``oui``
-attribute, which just returns their first three bytes as
+attribute, which returns their first three bytes as
 an OUI object:
 
 .. code:: python
 
-    >>> macaddress.EUI48('01:02:03:04:05:06').oui
+    >>> macaddress.MAC('01:02:03:04:05:06').oui
     OUI('01-02-03')
+
+
+Compare
+~~~~~~~
+
+Equality
+````````
 
 All ``macaddress`` classes support equality comparisons:
 
@@ -89,36 +284,18 @@ All ``macaddress`` classes support equality comparisons:
     True
     >>> macaddress.OUI('01-02-03') == macaddress.OUI('ff-ee-dd')
     False
-    >>> macaddress.OUI('01-02-03') == macaddress.CDI32('01-02-03-04')
-    False
-    >>> macaddress.OUI('01-02-03') == macaddress.CDI32('01-02-03-04').oui
+    >>> macaddress.OUI('01-02-03') != macaddress.CDI32('01-02-03-04')
     True
+    >>> macaddress.OUI('01-02-03') != macaddress.CDI32('01-02-03-04').oui
+    False
 
-All ``macaddress`` classes can be initialized with raw bytes
-or raw integers representing their value instead of strings:
+Ordering
+````````
 
-.. code:: python
-
-    >>> macaddress.MAC(b'abcdef')
-    MAC('61-62-63-64-65-66')
-    >>> macaddress.MAC(0x010203ffeedd)
-    MAC('01-02-03-FF-EE-DD')
-    >>> macaddress.MAC(1)
-    MAC('00-00-00-00-00-01')
-    >>> macaddress.OUI(b'abc')
-    OUI('61-62-63')
-    >>> macaddress.OUI(0x010203)
-    OUI('01-02-03')
-    >>> macaddress.OUI(1)
-    OUI('00-00-01')
-
-If any of the values passed to the constructors are invalid,
-the constructors raise a ``TypeError`` or a ``ValueError``
-as appropriate.
-
-All ``macaddress`` classes also support total ordering. The
-comparisons are intended to intuitively put identifiers
-that start with the same bits next to each other sorting:
+All ``macaddress`` classes support total
+ordering. The comparisons are designed to
+intuitively sort identifiers that start
+with the same bits next to each other:
 
 .. code:: python
 
@@ -134,3 +311,27 @@ that start with the same bits next to each other sorting:
     FF-EE-DD
     FF-EE-DD-01-02-03
     FF-EE-DD-01-02-04
+
+
+Define New Types
+~~~~~~~~~~~~~~~~
+
+This library is designed to make it very easy
+to use other hardware address types that this
+library does not currently define for you.
+
+For example, if you want to handle IP-over-InfiniBand
+link-layer addresses, all you need to define is:
+
+.. code:: python
+
+    class InfiniBand(macaddress.HWAddress):
+        size = 20 * 8  # size in bits; 20 octets
+
+        formats = (
+            'xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx',
+            'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx',
+            'xxxx.xxxx.xxxx.xxxx.xxxx.xxxx.xxxx.xxxx.xxxx.xxxx',
+            'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+            # or whatever formats you want to support
+        )
