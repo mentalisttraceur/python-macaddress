@@ -145,8 +145,8 @@ the given classes, a ``ValueError`` is raised:
     '01:23' cannot be parsed as MAC, OUI, or EUI64
 
 Note that the message of the ``ValueError`` tries to be helpful
-for developers, but it is not localized, nor is it part of the
-official public interface covered by SemVer.
+for developers, but it is not localized, nor is its exact text
+part of the official public interface covered by SemVer.
 
 
 Parse from Bytes
