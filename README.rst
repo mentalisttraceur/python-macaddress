@@ -228,6 +228,8 @@ attribute on the instance, or on a subclass:
     MACWithColonsByDefault('AB:CD:EF:01:02:03')
     >>> str(MACWithColonsByDefault('ab-cd-ef-01-02-03'))
     AB:CD:EF:01:02:03
+    >>> str(MACWithColonsByDefault(int(mac)))
+    01:02:03:04:05:06
 
 Note that appending the original ``formats``
 tuple to the new custom formats ensures that
