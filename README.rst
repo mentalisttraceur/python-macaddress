@@ -85,14 +85,12 @@ If the string does not match one of the formats, a
 
 .. code:: python
 
-    >>> macaddress.MAC('foo bar')
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/home/user/code/m/macaddress.py", line 84, in __init__
-        self._address, _ = _parse(address, type(self))
-      File "/home/user/code/m/macaddress.py", line 357, in _parse
-        raise _value_error(input, 'cannot be parsed as', *classes)
-    ValueError: 'foo bar' cannot be parsed as MAC
+    >>> try:
+    ...     macaddress.MAC('foo bar')
+    ... except ValueError as error:
+    ...     print(error)
+    ... 
+    'foo bar' cannot be parsed as MAC
 
 If you need to parse in a format that isn't supported,
 you can define a subclass and add the format:
@@ -126,19 +124,17 @@ which might be one of several classes:
     >>> macaddress.parse('0102030405060708', macaddress.EUI64, macaddress.EUI48)
     EUI64('01-02-03-04-05-06-07-08')
 
-Note that the message of the ``ValueError`` tries to be helpful
-to humans by mentioning what classes you tried to parse it as:
+Note that the message of the ``ValueError`` tries to
+be helpful by listing the names of all classes tried:
 
 .. code:: python
 
-    >>> macaddress.parse('x', macaddress.MAC, macaddress.OUI, macaddress.EUI64)
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/home/user/code/m/macaddress.py", line 335, in parse
-        address, cls = _parse(string, *classes)
-      File "/home/user/code/m/macaddress.py", line 363, in _parse
-        raise _value_error(input, 'cannot be parsed as', *classes)
-    ValueError: 'x' cannot be parsed as MAC, OUI, or EUI64
+    >>> try:
+    ...     macaddress.parse('01:23', macaddress.MAC, macaddress.OUI)
+    ... except ValueError as error:
+    ...     print(error)
+    ... 
+    '01:23' cannot be parsed as MAC or OUI
 
 
 Parse from Bytes
@@ -157,12 +153,12 @@ If the byte string is the wrong size, a ``ValueError`` is raised:
 
 .. code:: python
 
-    >>> macaddress.MAC(b'\x01\x02\x03')
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/home/user/code/m/macaddress.py", line 86, in __init__
-        raise _value_error(address, 'has wrong length for', type(self))
-    ValueError: b'\x01\x02\x03' has wrong length for MAC
+    >>> try:
+    ...     macaddress.MAC(b'\x01\x02\x03')
+    ... except ValueError as error:
+    ...     print(error)
+    ... 
+    b'\x01\x02\x03' has wrong length for MAC
 
 
 Parse from Integers
@@ -193,12 +189,12 @@ that you're trying to construct, a ``ValueError`` is raised:
 
 .. code:: python
 
-    >>> macaddress.OUI(1_000_000_000)
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "/home/user/code/m/macaddress.py", line 78, in __init__
-        raise _value_error(address, 'is too big for', type(self))
-    ValueError: 1000000000 is too big for OUI
+    >>> try:
+    ...     macaddress.OUI(1_000_000_000)
+    ... except ValueError as error:
+    ...     print(error)
+    ... 
+    1000000000 is too big for OUI
 
 
 Get as String
