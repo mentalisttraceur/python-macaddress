@@ -132,7 +132,7 @@ def test_ordering(address1, address2):
 
 def _bits(address):
     size = address.size
-    address = address._address
+    address = int(address)
     bits = []
     while size:
         least_significant_bit = address & 1
