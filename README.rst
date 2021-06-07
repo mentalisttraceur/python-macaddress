@@ -104,7 +104,6 @@ you can define a subclass and add the format:
     ...         'xx-xx-xx-xx-xx-xx-',
     ...         'xx:xx:xx:xx:xx:xx:',
     ...         'xxxx.xxxx.xxxx.',
-    ...         'xxxxxxxxxxxx',
     ...     )
     ... 
     >>> MACAllowsTrailingDelimiters('01-02-03-04-05-06-')
