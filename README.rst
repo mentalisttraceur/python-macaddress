@@ -115,26 +115,38 @@ which might be one of several classes:
 
 .. code:: python
 
-    >>> macaddress.parse('01:02:03', macaddress.OUI, macaddress.MAC)
+    >>> from macaddress import EUI48, EUI64, MAC, OUI
+
+    >>> macaddress.parse('01:02:03', OUI, MAC)
     OUI('01-02-03')
-    >>> macaddress.parse('01:02:03:04:05:06', macaddress.OUI, macaddress.MAC)
+    >>> macaddress.parse('01:02:03:04:05:06', OUI, MAC, EUI64)
     MAC('01-02-03-04-05-06')
-    >>> macaddress.parse('010203040506', macaddress.EUI64, macaddress.EUI48)
+    >>> macaddress.parse('010203040506', EUI64, EUI48)
     EUI48('01-02-03-04-05-06')
-    >>> macaddress.parse('0102030405060708', macaddress.EUI64, macaddress.EUI48)
+    >>> macaddress.parse('0102030405060708', EUI64, EUI48, OUI, MAC)
     EUI64('01-02-03-04-05-06-07-08')
 
-Note that the message of the ``ValueError`` tries to
-be helpful by listing the names of all classes tried:
+If the input string cannot be parsed as any of
+the given classes, a ``ValueError`` is raised:
 
 .. code:: python
 
     >>> try:
-    ...     macaddress.parse('01:23', macaddress.MAC, macaddress.OUI)
+    ...     macaddress.parse('01:23', MAC, OUI)
     ... except ValueError as error:
     ...     print(error)
     ... 
     '01:23' cannot be parsed as MAC or OUI
+    >>> try:
+    ...     macaddress.parse('01:23', MAC, OUI, EUI64)
+    ... except ValueError as error:
+    ...     print(error)
+    ... 
+    '01:23' cannot be parsed as MAC, OUI, or EUI64
+
+Note that the message of the ``ValueError`` tries to be helpful
+for developers, but it is not localized, nor is it part of the
+official public interface covered by SemVer.
 
 
 Parse from Bytes
