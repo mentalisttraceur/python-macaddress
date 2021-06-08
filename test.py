@@ -207,6 +207,16 @@ def _bits(address):
     return ''.join(map(str, reversed(bits)))
 
 
+def test_type_errors():
+    class Dummy:
+        pass
+    for thing in (None, [], {}, object, object(), Dummy, Dummy()):
+        with pytest.raises(TypeError):
+            MAC(thing)
+        with pytest.raises(TypeError):
+            parse(thing, MAC, OUI)
+
+
 def test_provided_classes():
     for Class in OUI, CDI32, CDI40, MAC, EUI48, EUI60, EUI64:
         for format in Class.formats:
