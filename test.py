@@ -1,6 +1,14 @@
 from hypothesis import given
 from hypothesis.strategies import (
-    binary, composite, integers, lists, one_of, sampled_from
+    binary,
+    characters,
+    composite,
+    from_regex,
+    integers,
+    lists,
+    one_of,
+    sampled_from,
+    text,
 )
 import pytest
 
@@ -49,6 +57,18 @@ def _address_classes_with_invalid_bytes(draw):
         binary(min_size=size_in_bytes+1),
     ))
     return (Class, invalid_byte_string)
+
+
+@composite
+def _address_classes_with_invalid_strings(draw):
+    Class = draw(_address_classes())
+    size_in_nibbles = (Class.size + 3) >> 2
+    invalid_string = draw(one_of(
+        text(characters(), max_size=size_in_nibbles-1),
+        text(characters(), min_size=size_in_nibbles+1),
+        from_regex('[^0-9A-Fa-f]'),
+    ))
+    return (Class, invalid_string)
 
 
 @composite
@@ -132,6 +152,13 @@ def test_bytes_value_error(Class_with_bytes):
 def test_str(address):
     Class = type(address)
     assert Class(str(address)) == address
+
+
+@given(_address_classes_with_invalid_strings())
+def test_str_value_error(Class_with_string):
+    Class, string = Class_with_string
+    with pytest.raises(ValueError):
+        Class(string)
 
 
 @given(_addresses(random_formats=1))
