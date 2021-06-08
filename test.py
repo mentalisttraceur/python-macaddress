@@ -167,6 +167,12 @@ def test_parse(address):
     assert parse(str(address), Class) == address
 
 
+@given(_addresses())
+def test_copy(address):
+    Class = type(address)
+    assert Class(address) == address
+
+
 @given(_addresses_with_several_random_formats())
 def test_alternate_str(address):
     Class = type(address)

@@ -69,10 +69,12 @@ class HWAddress:
 
         Arguments:
             address: An ``int``, ``bytes``, or ``str`` representation
-                of the address. If a string, it is parsed using the
-                ``formats`` attribute of the class. If a byte string,
-                it is read in big-endian. If it is an integer, bytes
-                in the integer value are used as the address bytes.
+                of the address, or another instance of the same class
+                of address. If a string, the ``formats`` attribute of
+                the class is used to parse it. If a byte string, it
+                is read in big-endian. If an integer, its value bytes
+                in big-endian are used as the address bytes. If an
+                instance of the same address class, its value is used.
 
         Raises:
             TypeError: If ``address`` is not one of the valid types.
@@ -97,6 +99,8 @@ class HWAddress:
             self._address = int.from_bytes(address, 'big') >> offset
         elif isinstance(address, str):
             self._address, _ = _parse(address, type(self))
+        elif isinstance(address, type(self)):
+            self._address = address._address
         else:
             raise _type_error(address, 'is of a wrong type for', type(self))
 
