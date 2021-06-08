@@ -39,7 +39,7 @@ def _lists_of_distinctly_formatted_addresses(draw):
 
 
 @composite
-def _address_classes_with_invalid_integers(draw):
+def _address_classes_and_invalid_integers(draw):
     Class = draw(_address_classes())
     invalid_integer = draw(one_of(
         integers(max_value=-1),
@@ -49,7 +49,7 @@ def _address_classes_with_invalid_integers(draw):
 
 
 @composite
-def _address_classes_with_invalid_bytes(draw):
+def _address_classes_and_invalid_bytes(draw):
     Class = draw(_address_classes())
     size_in_bytes = (Class.size + 7) >> 3
     invalid_byte_string = draw(one_of(
@@ -60,7 +60,7 @@ def _address_classes_with_invalid_bytes(draw):
 
 
 @composite
-def _address_classes_with_invalid_strings(draw):
+def _address_classes_and_invalid_strings(draw):
     Class = draw(_address_classes())
     size_in_nibbles = (Class.size + 3) >> 2
     invalid_string = draw(one_of(
@@ -128,9 +128,9 @@ def test_int(address):
     assert Class(int(address)) == address
 
 
-@given(_address_classes_with_invalid_integers())
-def test_int_value_error(Class_with_integer):
-    Class, integer = Class_with_integer
+@given(_address_classes_and_invalid_integers())
+def test_int_value_error(Class_and_integer):
+    Class, integer = Class_and_integer
     with pytest.raises(ValueError):
         Class(integer)
 
@@ -141,9 +141,9 @@ def test_bytes(address):
     assert Class(bytes(address)) == address
 
 
-@given(_address_classes_with_invalid_integers())
-def test_bytes_value_error(Class_with_bytes):
-    Class, byte_string = Class_with_bytes
+@given(_address_classes_and_invalid_integers())
+def test_bytes_value_error(Class_and_bytes):
+    Class, byte_string = Class_and_bytes
     with pytest.raises(ValueError):
         Class(byte_string)
 
@@ -154,9 +154,9 @@ def test_str(address):
     assert Class(str(address)) == address
 
 
-@given(_address_classes_with_invalid_strings())
-def test_str_value_error(Class_with_string):
-    Class, string = Class_with_string
+@given(_address_classes_and_invalid_strings())
+def test_str_value_error(Class_and_string):
+    Class, string = Class_and_string
     with pytest.raises(ValueError):
         Class(string)
 
@@ -168,7 +168,7 @@ def test_parse(address):
 
 
 @given(_addresses())
-def test_copy(address):
+def test_copy_construction(address):
     Class = type(address)
     assert Class(address) == address
 

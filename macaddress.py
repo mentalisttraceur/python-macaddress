@@ -315,8 +315,6 @@ class EUI64(_StartsWithOUI):
 def parse(value, *classes):
     """Try parsing a value as several hardware address classes at once.
 
-    This is useful when you have one piece of code that can accept user
-    input of two or more different hardware addresses or identifiers.
     This lets you can just write
 
         address = hwaddress.parse(user_input, EUI64, EUI48, ...)
@@ -324,10 +322,10 @@ def parse(value, *classes):
     instead of all of this:
 
         try:
-            hw_address = hwaddress.EUI64(user_input)
+            address = hwaddress.EUI64(user_input)
         except ValueError:
             try:
-                hw_address = hwaddress.EUI48(user_input)
+                address = hwaddress.EUI48(user_input)
             except ValueError:
                 ...
 
@@ -335,6 +333,8 @@ def parse(value, *classes):
         value: The value to parse as a hardware address. Either a
             string, byte string, or an instance of one of the classes.
         *classes: HWAddress subclasses to try to parse the string as.
+            If the input address could parse as more than one of the
+            classes, it is parsed as the first one.
 
     Returns:
         HWAddress: The parsed hardware address if the value argument
