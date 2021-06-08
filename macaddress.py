@@ -34,7 +34,7 @@ def _class_names_in_proper_english(classes):
         return ', '.join(class_names)
 
 
-def _type_error(value, error, *classes):
+def _type_error(value, *classes):
     class_names = _class_names_in_proper_english(classes)
     return TypeError(repr(value) + ' has wrong type for ' + class_names)
 
