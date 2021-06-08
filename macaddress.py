@@ -12,7 +12,7 @@ __all__ = (
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
@@ -331,12 +331,12 @@ def parse(string, *classes):
             given classes.
         TypeError: If the string is not actually a string.
     """
-    if not isinstance(string, str):
-        return TypeError
-    if not classes:
-        return None
-    address, cls = _parse(string, *classes)
-    return cls(address)
+    if isinstance(string, str):
+        if not classes:
+            return None
+        address, cls = _parse(string, *classes)
+        return cls(address)
+    raise TypeError(_name(string) + ' cannot be parsed as a hardware address')
 
 
 def _parse(string, *classes):
