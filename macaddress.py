@@ -343,9 +343,9 @@ def parse(value, *classes):
         None: If no classes were passed in.
 
     Raises:
-        ValueError: If the string could not be parsed as any of the
-            given classes.
-        TypeError: If the string is not actually a string.
+        ValueError: If the value could not be parsed as any
+            of the given classes.
+        TypeError: If the value is not actually a string.
     """
     if not classes:
         return None
