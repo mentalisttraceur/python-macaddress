@@ -1,6 +1,6 @@
 from hypothesis import given
 from hypothesis.strategies import (
-    composite, integers, lists, one_of, sampled_from
+    binary, composite, integers, lists, one_of, sampled_from
 )
 import pytest
 
@@ -38,6 +38,17 @@ def _address_classes_with_invalid_integers(draw):
         integers(min_value=(1 << Class.size)),
     ))
     return (Class, invalid_integer)
+
+
+@composite
+def _address_classes_with_invalid_bytes(draw):
+    Class = draw(_address_classes())
+    size_in_bytes = (Class.size + 7) >> 3
+    invalid_byte_string = draw(one_of(
+        binary(max_size=size_in_bytes-1),
+        binary(min_size=size_in_bytes+1),
+    ))
+    return (Class, invalid_byte_string)
 
 
 @composite
@@ -108,6 +119,13 @@ def test_int_value_error(Class_with_integer):
 def test_bytes(address):
     Class = type(address)
     assert Class(bytes(address)) == address
+
+
+@given(_address_classes_with_invalid_integers())
+def test_bytes_value_error(Class_with_bytes):
+    Class, byte_string = Class_with_bytes
+    with pytest.raises(ValueError):
+        Class(byte_string)
 
 
 @given(_addresses(random_formats=1))
