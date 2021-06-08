@@ -22,17 +22,21 @@ def _name(obj):
     return type(obj).__name__
 
 
-def _value_error(value, error, *classes):
+def _class_names_in_proper_english(classes):
     class_names = [cls.__name__ for cls in classes]
     number_of_classes = len(classes)
     if number_of_classes < 2:
-        class_description = class_names[0]
+        return class_names[0]
     elif number_of_classes == 2:
-        class_description = ' or '.join(class_names)
+        return ' or '.join(class_names)
     else:
         class_names[-1] = 'or ' + class_names[-1]
-        class_description = ', '.join(class_names)
-    return ValueError(repr(value) + ' ' + error + ' ' + class_description)
+        return ', '.join(class_names)
+
+
+def _value_error(value, error, *classes):
+    class_names = _class_names_in_proper_english(classes)
+    return ValueError(repr(value) + ' ' + error + ' ' + class_names)
 
 
 class HWAddress:
