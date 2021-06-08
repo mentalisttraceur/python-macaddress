@@ -1,5 +1,8 @@
 from hypothesis import given
-from hypothesis.strategies import composite, integers, lists, sampled_from
+from hypothesis.strategies import (
+    composite, integers, lists, one_of, sampled_from
+)
+import pytest
 
 from macaddress import *
 
@@ -25,6 +28,16 @@ def _lists_of_distinctly_formatted_addresses(draw):
         max_size=8,
         unique_by=lambda address: address.formats[0],
     ))
+
+
+@composite
+def _address_classes_with_invalid_integers(draw):
+    Class = draw(_address_classes())
+    invalid_integer = draw(one_of(
+        integers(max_value=-1),
+        integers(min_value=(1 << Class.size)),
+    ))
+    return (Class, invalid_integer)
 
 
 @composite
@@ -82,6 +95,13 @@ def _address_format_strings(draw, size_in_nibbles):
 def test_int(address):
     Class = type(address)
     assert Class(int(address)) == address
+
+
+@given(_address_classes_with_invalid_integers())
+def test_int_value_error(Class_with_integer):
+    Class, integer = Class_with_integer
+    with pytest.raises(ValueError):
+        Class(integer)
 
 
 @given(_addresses())
