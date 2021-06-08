@@ -70,6 +70,17 @@ def _lists_of_distinctly_formatted_addresses(draw):
         unique_by=lambda address: address.formats[0],
     ))
 
+
+@composite
+def _lists_of_distinctly_sized_addresses(draw):
+    return draw(lists(
+        _addresses(),
+        min_size=2,
+        max_size=8,
+        unique_by=lambda address: (address.size + 7) >> 3,
+    ))
+
+
 @composite
 def _address_classes(draw, random_formats=0):
     address_sizes = integers(min_value=1, max_value=64)
@@ -190,6 +201,19 @@ def test_parse_str_alternatives(addresses):
     classes = [type(address) for address in addresses]
     for address in addresses:
         assert parse(str(address), *classes) == address
+
+
+@given(_addresses())
+def test_parse_bytes(address):
+    Class = type(address)
+    assert parse(bytes(address), Class) == address
+
+
+@given(_lists_of_distinctly_sized_addresses())
+def test_parse_bytes_alternatives(addresses):
+    classes = [type(address) for address in addresses]
+    for address in addresses:
+        assert parse(bytes(address), *classes) == address
 
 
 @given(_addresses())
