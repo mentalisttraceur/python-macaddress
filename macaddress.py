@@ -361,7 +361,7 @@ def parse(value, *classes):
         raise _value_error(value, 'has wrong length for', *classes)
     elif isinstance(value, classes):
         return value
-    raise _type_error(value, classes)
+    raise _type_error(value, *classes)
 
 
 def _parse(string, *classes):
