@@ -250,6 +250,8 @@ def test_type_errors():
             MAC(thing)
         with pytest.raises(TypeError):
             parse(thing, MAC, OUI)
+        with pytest.raises(TypeError):
+            parse(thing)
 
 
 def test_provided_classes():

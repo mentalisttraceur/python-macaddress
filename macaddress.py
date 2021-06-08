@@ -340,15 +340,15 @@ def parse(value, *classes):
         HWAddress: The parsed hardware address if the value argument
             was a string or byte string, or the value argument itself
             if it was already an instance of one of the classes.
-        None: If no classes were passed in.
 
     Raises:
-        TypeError: If the value is not one of the valid types.
+        TypeError: If the value is not one of the valid types,
+            or if no classes were passed in.
         ValueError: If the value could not be parsed as any
             of the given classes.
     """
     if not classes:
-        return None
+        raise TypeError('parse() requires at least one class argument')
     if isinstance(value, str):
         address, cls = _parse(value, *classes)
         return cls(address)
