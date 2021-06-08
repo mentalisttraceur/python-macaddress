@@ -357,7 +357,7 @@ def parse(value, *classes):
         min_size = max_size - 7
         for cls in classes:
             if min_size <= cls.size <= max_size:
-                return cls(address)
+                return cls(value)
         raise _value_error(value, 'has wrong length for', *classes)
     elif isinstance(value, classes):
         return value
