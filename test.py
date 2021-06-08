@@ -6,10 +6,8 @@ from macaddress import *
 
 @composite
 def _addresses(draw, random_formats=0):
-    address_sizes = integers(min_value=1, max_value=64)
-    size_in_bits = draw(address_sizes)
-    Class = draw(_address_classes(size_in_bits, random_formats))
-    address_as_an_integer = draw(_address_integers(size_in_bits))
+    Class = draw(_address_classes(random_formats))
+    address_as_an_integer = draw(_address_integers(Class.size))
     return Class(address_as_an_integer)
 
 
@@ -30,7 +28,9 @@ def _lists_of_distinctly_formatted_addresses(draw):
 
 
 @composite
-def _address_classes(draw, size_in_bits, random_formats=0):
+def _address_classes(draw, random_formats=0):
+    address_sizes = integers(min_value=1, max_value=64)
+    size_in_bits = draw(address_sizes)
     size_in_nibbles = (size_in_bits + 3) >> 2
 
     if random_formats > 0:
