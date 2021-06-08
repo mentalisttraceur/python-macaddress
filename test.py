@@ -161,7 +161,7 @@ def test_str_value_error(Class_and_string):
 
 
 @given(_addresses_with_several_random_formats())
-def test_alternate_str(address):
+def test_str_alternatives(address):
     Class = type(address)
     for format in Class.formats:
         # Override instance formats to make this format the only
@@ -180,7 +180,7 @@ def test_copy_construction(address):
 
 
 @given(_addresses(random_formats=1))
-def test_parse(address):
+def test_parse_str(address):
     Class = type(address)
     assert parse(str(address), Class) == address
 
@@ -192,7 +192,7 @@ def test_parse_passthrough(address):
 
 
 @given(_lists_of_distinctly_formatted_addresses())
-def test_alternate_parse(addresses):
+def test_parse_str_alternatives(addresses):
     classes = [type(address) for address in addresses]
     for address in addresses:
         assert parse(str(address), *classes) == address
