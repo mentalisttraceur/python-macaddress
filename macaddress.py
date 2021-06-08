@@ -36,7 +36,7 @@ def _class_names_in_proper_english(classes):
 
 def _type_error(value, error, *classes):
     class_names = _class_names_in_proper_english(classes)
-    return TypeError(repr(value) + ' ' + error + ' ' + class_names)
+    return TypeError(repr(value) + ' has wrong type for ' + class_names)
 
 
 def _value_error(value, error, *classes):
@@ -102,7 +102,7 @@ class HWAddress:
         elif isinstance(address, type(self)):
             self._address = address._address
         else:
-            raise _type_error(address, 'is of a wrong type for', type(self))
+            raise _type_error(address, type(self))
 
     def __repr__(self):
         """Represent the hardware address as an unambiguous string."""
@@ -354,7 +354,7 @@ def parse(value, *classes):
         return cls(address)
     elif isinstance(value, classes):
         return value
-    raise _type_error(value, 'is of a wrong type for', *classes)
+    raise _type_error(value, classes)
 
 
 def _parse(string, *classes):
