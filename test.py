@@ -185,17 +185,17 @@ def test_parse_str(address):
     assert parse(str(address), Class) == address
 
 
-@given(_addresses())
-def test_parse_passthrough(address):
-    Class = type(address)
-    assert parse(address, Class) == address
-
-
 @given(_lists_of_distinctly_formatted_addresses())
 def test_parse_str_alternatives(addresses):
     classes = [type(address) for address in addresses]
     for address in addresses:
         assert parse(str(address), *classes) == address
+
+
+@given(_addresses())
+def test_parse_passthrough(address):
+    Class = type(address)
+    assert parse(address, Class) == address
 
 
 @given(_addresses(), _addresses())
