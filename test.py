@@ -173,16 +173,16 @@ def test_alternate_str(address):
         assert Class(str(address)) == address
 
 
-@given(_addresses(random_formats=1))
-def test_parse(address):
-    Class = type(address)
-    assert parse(str(address), Class) == address
-
-
 @given(_addresses())
 def test_copy_construction(address):
     Class = type(address)
     assert Class(address) == address
+
+
+@given(_addresses(random_formats=1))
+def test_parse(address):
+    Class = type(address)
+    assert parse(str(address), Class) == address
 
 
 @given(_addresses())
