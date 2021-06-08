@@ -29,16 +29,6 @@ def _addresses_with_several_random_formats(draw):
 
 
 @composite
-def _lists_of_distinctly_formatted_addresses(draw):
-    return draw(lists(
-        _addresses(random_formats=1),
-        min_size=2,
-        max_size=8,
-        unique_by=lambda address: address.formats[0],
-    ))
-
-
-@composite
 def _address_classes_and_invalid_integers(draw):
     Class = draw(_address_classes())
     invalid_integer = draw(one_of(
@@ -70,6 +60,15 @@ def _address_classes_and_invalid_strings(draw):
     ))
     return (Class, invalid_string)
 
+
+@composite
+def _lists_of_distinctly_formatted_addresses(draw):
+    return draw(lists(
+        _addresses(random_formats=1),
+        min_size=2,
+        max_size=8,
+        unique_by=lambda address: address.formats[0],
+    ))
 
 @composite
 def _address_classes(draw, random_formats=0):
