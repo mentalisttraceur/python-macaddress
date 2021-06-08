@@ -160,6 +160,19 @@ def test_str_value_error(Class_and_string):
         Class(string)
 
 
+@given(_addresses_with_several_random_formats())
+def test_alternate_str(address):
+    Class = type(address)
+    for format in Class.formats:
+        # Override instance formats to make this format the only
+        # format, because it will stringify using the first one:
+        address.formats = (format,)
+        # The class still has the original formats, so this loop
+        # tests if the constructor parses each alternate format
+        # successfully, whether or not it is the first one:
+        assert Class(str(address)) == address
+
+
 @given(_addresses(random_formats=1))
 def test_parse(address):
     Class = type(address)
@@ -176,19 +189,6 @@ def test_copy_construction(address):
 def test_parse_passthrough(address):
     Class = type(address)
     assert parse(address, Class) == address
-
-
-@given(_addresses_with_several_random_formats())
-def test_alternate_str(address):
-    Class = type(address)
-    for format in Class.formats:
-        # Override instance formats to make this format the only
-        # format, because it will stringify using the first one:
-        address.formats = (format,)
-        # The class still has the original formats, so this loop
-        # tests if the constructor parses each alternate format
-        # successfully, whether or not it is the first one:
-        assert Class(str(address)) == address
 
 
 @given(_lists_of_distinctly_formatted_addresses())
