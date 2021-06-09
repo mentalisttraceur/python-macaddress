@@ -151,7 +151,7 @@ def test_bytes(address):
     assert Class(bytes(address)) == address
 
 
-@given(_address_classes_and_invalid_integers())
+@given(_address_classes_and_invalid_bytes())
 def test_bytes_value_error(Class_and_bytes):
     Class, byte_string = Class_and_bytes
     with pytest.raises(ValueError):
