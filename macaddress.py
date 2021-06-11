@@ -12,7 +12,7 @@ __all__ = (
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
@@ -383,6 +383,8 @@ def _parse(string, *classes):
             address <<= 4
             address += int(character, 16)
             character = 'x'
+        elif character == 'x':
+            character = ''
         while start < end and candidates[start][0][index] < character:
             start += 1
         while start < end and candidates[end - 1][0][index] > character:

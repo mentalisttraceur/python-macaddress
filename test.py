@@ -171,6 +171,13 @@ def test_str_value_error(Class_and_string):
         Class(string)
 
 
+@given(_address_classes())
+def test_str_x_literal_value_error(Class):
+    size_in_nibbles = (Class.size + 3) >> 2
+    with pytest.raises(ValueError):
+        Class('x' * size_in_nibbles)
+
+
 @given(_addresses_with_several_random_formats())
 def test_str_alternatives(address):
     Class = type(address)
