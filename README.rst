@@ -225,10 +225,6 @@ use a different format, you can override the
 
 .. code:: python
 
-    >>> mac.formats = ('xx:xx:xx:xx:xx:xx',)
-    >>> str(mac)
-    01-02-03-04-05-06
-
     >>> class MACWithColonsByDefault(macaddress.MAC):
     ...     formats = ('xx:xx:xx:xx:xx:xx',) + macaddress.MAC.formats
     ... 
