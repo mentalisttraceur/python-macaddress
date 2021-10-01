@@ -218,10 +218,10 @@ Get as String
     >>> str(mac)
     01-02-03-04-05-06
 
-The first format listed in ``formats`` is used when
-stringifying the object. If you want to use a
-different format, you can override the ``formats``
-attribute on the instance, or on a subclass:
+The first format listed in ``formats`` is used
+when stringifying the object. If you want to
+use a different format, you can override the
+``formats`` attribute on a subclass:
 
 .. code:: python
 
