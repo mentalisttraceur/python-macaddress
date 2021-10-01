@@ -218,27 +218,6 @@ Get as String
     >>> str(mac)
     01-02-03-04-05-06
 
-The first format listed in ``formats`` is used
-when stringifying the object. If you want to
-use a different format, you can override the
-``formats`` attribute on a subclass:
-
-.. code:: python
-
-    >>> class MACWithColonsByDefault(macaddress.MAC):
-    ...     formats = ('xx:xx:xx:xx:xx:xx',) + macaddress.MAC.formats
-    ... 
-    >>> MACWithColonsByDefault('ab:cd:ef:01:02:03')
-    MACWithColonsByDefault('AB:CD:EF:01:02:03')
-    >>> str(MACWithColonsByDefault('ab-cd-ef-01-02-03'))
-    AB:CD:EF:01:02:03
-    >>> str(MACWithColonsByDefault(int(mac)))
-    01:02:03:04:05:06
-
-Note that appending the original ``formats``
-tuple to the new custom formats ensures that
-you can still *parse* all the valid formats.
-
 
 Get as Bytes
 ~~~~~~~~~~~~
@@ -340,3 +319,5 @@ link-layer addresses, all you need to define is:
             'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
             # or whatever formats you want to support
         )
+        # All formats are tried when parsing from string,
+        # and the first format is used when stringifying.
