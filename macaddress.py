@@ -3,7 +3,6 @@
 
 """Like ``ipaddress``, but for hardware identifiers such as MAC addresses."""
 
-
 __all__ = (
     'HWAddress',
     'OUI',
@@ -12,7 +11,7 @@ __all__ = (
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
