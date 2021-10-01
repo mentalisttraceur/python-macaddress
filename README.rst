@@ -216,7 +216,7 @@ Get as String
 
     >>> mac = macaddress.MAC('01-02-03-04-05-06')
     >>> str(mac)
-    01-02-03-04-05-06
+    '01-02-03-04-05-06'
 
 
 Get as Bytes
