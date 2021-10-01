@@ -1,6 +1,7 @@
 from hypothesis import given
 from hypothesis.strategies import (
     binary,
+    booleans,
     characters,
     composite,
     from_regex,
@@ -97,14 +98,24 @@ def _address_classes(draw, random_formats=0):
         format_string = 'x' * size_in_nibbles
         format_strings = (format_string,)
 
+    class_should_be_slotted = draw(booleans())
+
     class Class(HWAddress):
+        __slots__ = ()
         size = size_in_bits
         formats = format_strings
         def __repr__(self):
             name = type(self).__name__
             address = repr(self._address)
             formats = repr(type(self).formats)
-            return ' '.join(('<', name, address, formats, '>'))
+            slots = 'slots=' + repr(class_should_be_slotted)
+            return ' '.join(('<', name, address, formats, slots, '>'))
+
+    if not class_should_be_slotted:
+        # Subclassing again without defining __slots__ is effectively
+        # like "removing" slots from the class we just made.
+        class Class(Class):
+            pass
 
     # This helpfully shows the size of each class and instance in
     # pytest output when Hypothesis finds test-failing examples:
@@ -181,14 +192,21 @@ def test_str_x_literal_value_error(Class):
 @given(_addresses_with_several_random_formats())
 def test_str_alternatives(address):
     Class = type(address)
-    for format in Class.formats:
+    formats = Class.formats
+    for format in formats:
         # Override instance formats to make this format the only
-        # format, because it will stringify using the first one:
-        address.formats = (format,)
-        # The class still has the original formats, so this loop
-        # tests if the constructor parses each alternate format
-        # successfully, whether or not it is the first one:
-        assert Class(str(address)) == address
+        # format, because it will stringify using the first one.
+        # Note: we have to overwrite `.formats` on the class
+        # because it cannot be overwritten on the instance if
+        # the class is slotted.
+        Class.formats = (format,)
+        # Format to string using the newly chosen format:
+        formatted = str(address)
+        # Restore the original formats for comparison, so that
+        # the test verifies that the constructor parses each
+        # alternate format whether or not it is the first one:
+        Class.formats = formats
+        assert Class(formatted) == address
 
 
 @given(_addresses())
