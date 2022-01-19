@@ -214,13 +214,15 @@ Get as String
 
 .. code:: python
 
-    >>> mac = macaddress.MAC('01-02-03-04-05-06')
+    >>> mac = macaddress.MAC('01-02-03-0A-0B-0C')
     >>> str(mac)
-    '01-02-03-04-05-06'
+    '01-02-03-0A-0B-0C'
     >>> str(mac).replace('-', ':')
-    '01:02:03:04:05:06'
+    '01:02:03:0A:0B:0C'
     >>> str(mac).replace('-', '')
-    '010203040506'
+    '0102030A0B0C'
+    >>> str(mac).lower()
+    '01-02-03-0a-0b-0c'
 
 
 Get as Bytes
