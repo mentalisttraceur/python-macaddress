@@ -318,7 +318,7 @@ class EUI64(_StartsWithOUI):
 def parse(value, *classes):
     """Try parsing a value as several hardware address classes at once.
 
-    This lets you can just write
+    This lets you just write
 
         address = hwaddress.parse(user_input, EUI64, EUI48, ...)
 
