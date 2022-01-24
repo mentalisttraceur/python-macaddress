@@ -247,6 +247,14 @@ def test_parse_passthrough(address):
     assert parse(address, Class) == address
 
 
+@given(_addresses())
+def test_equality_with_subclass(address):
+    Class = type(address)
+    class Subclass(Class):
+        pass
+    assert Subclass(int(address)) != address
+
+
 @given(_addresses(), _addresses())
 def test_ordering(address1, address2):
     assert (address1 <  address2) == (_bits(address1) <  _bits(address2))
