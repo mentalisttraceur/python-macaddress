@@ -134,9 +134,8 @@ class HWAddress:
     def __eq__(self, other):
         """Check if this hardware address is equal to another.
 
-        They are equal if they are instances of the same class
-        (including one being a subclass of the other), if they
-        have the same size, and if their addresses are equal.
+        They are equal if they are instances of the same class,
+        have the same size, and their addresses are equal.
         """
         if not isinstance(other, type(self)) or self.size != other.size:
             return False
