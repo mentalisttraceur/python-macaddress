@@ -287,6 +287,14 @@ def test_type_errors():
             parse(thing)
 
 
+def test_equality_not_implemented():
+    class Dummy:
+        pass
+    for thing in (None, [], {}, object, object(), Dummy, Dummy()):
+        assert MAC(0).__eq__(thing) is NotImplemented
+        assert MAC(0).__ne__(thing) is NotImplemented
+
+
 def test_provided_classes():
     for Class in OUI, CDI32, CDI40, MAC, EUI48, EUI60, EUI64:
         for format in Class.formats:

@@ -137,12 +137,16 @@ class HWAddress:
         They are equal if they are instances of the same class,
         have the same size, and their addresses are equal.
         """
+        if not isinstance(other, HWAddress):
+            return NotImplemented
         if not isinstance(other, type(self)) or self.size != other.size:
             return False
         return self._address == other._address
 
     def __ne__(self, other):
         """Check if this hardware address is not equal to another."""
+        if not isinstance(other, HWAddress):
+            return NotImplemented
         if not isinstance(other, type(self)) or self.size != other.size:
             return True
         return self._address != other._address
