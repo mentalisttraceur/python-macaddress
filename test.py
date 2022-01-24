@@ -11,6 +11,7 @@ from hypothesis.strategies import (
     sampled_from,
     text,
 )
+import reprshed
 import pytest
 
 from macaddress import *
@@ -105,22 +106,19 @@ def _address_classes(draw, random_formats=0):
         size = size_in_bits
         formats = format_strings
         def __repr__(self):
-            name = type(self).__name__
-            address = repr(self._address)
-            formats = repr(type(self).formats)
-            slots = 'slots=' + repr(class_should_be_slotted)
-            return ' '.join(('<', name, address, formats, slots, '>'))
+            return reprshed.impure(
+                self,
+                size=type(self).size,
+                formats=type(self).formats,
+                slots=class_should_be_slotted,
+                address=self._address,
+            )
 
     if not class_should_be_slotted:
         # Subclassing again without defining __slots__ is effectively
         # like "removing" slots from the class we just made.
         class Class(Class):
             pass
-
-    # This helpfully shows the size of each class and instance in
-    # pytest output when Hypothesis finds test-failing examples:
-    Class.__name__ += repr(size_in_bits)
-    Class.__qualname__ += repr(size_in_bits)
 
     return Class
 
