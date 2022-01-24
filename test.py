@@ -275,6 +275,14 @@ def _bits(address):
     return ''.join(map(str, reversed(bits)))
 
 
+@given(_addresses(), _addresses())
+def test_hash(address1, address2):
+    Class = type(address1)
+    assert hash(Class(address1)) == hash(address1)
+    if address1 == address2:
+        assert hash(address1) == hash(address2)
+
+
 def test_type_errors():
     class Dummy:
         pass
