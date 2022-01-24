@@ -187,8 +187,8 @@ class HWAddress:
         return this > that or (this == that and self.size >= other.size)
 
     def __hash__(self):
-        """Hash by address's raw integer value and class name"""
-        return hash((self._address, self.__class__.__name__))
+        """Get the hash of this hardware address."""
+        return hash((type(self), self._address))
 
 
 def _aligned_address_integers(address1, address2):
