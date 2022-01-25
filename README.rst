@@ -306,12 +306,11 @@ with the same bits next to each other:
 Define New Types
 ~~~~~~~~~~~~~~~~
 
-This library is designed to make it very easy
-to use other hardware address types that this
-library does not currently define for you.
+If this library does not provide a hardware address
+type that you need, you can easily define your own.
 
-For example, if you want to handle IP-over-InfiniBand
-link-layer addresses, all you need to define is:
+For example, this is all it takes to define
+IP-over-InfiniBand link-layer addresses:
 
 .. code:: python
 
