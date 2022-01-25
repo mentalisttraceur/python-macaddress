@@ -278,6 +278,21 @@ def test_ordering(address1, address2):
     assert (address1 >= address2) == (_bits(address1) >= _bits(address2))
 
 
+@given(_addresses(), _addresses())
+def test_comparison_consistency(address1, address2):
+    eq = (address1 == address2)
+    ne = (address1 != address2)
+    lt = (address1 <  address2)
+    le = (address1 <= address2)
+    gt = (address1 >  address2)
+    ge = (address1 >= address2)
+    assert eq == (not ne)
+    assert lt == (not ge)
+    assert gt == (not le)
+    assert eq == (ge and le)
+    assert ne == (lt or gt)
+
+
 def _bits(address):
     size = address.size
     address = int(address)
