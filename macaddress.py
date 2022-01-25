@@ -17,10 +17,6 @@ __version__ = '1.2.0'
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
 
 
-def _name(obj):
-    return type(obj).__name__
-
-
 def _class_names_in_proper_english(classes):
     class_names = [cls.__name__ for cls in classes]
     number_of_classes = len(classes)
@@ -105,7 +101,7 @@ class HWAddress:
 
     def __repr__(self):
         """Represent the hardware address as an unambiguous string."""
-        return _name(self) + '(' + repr(str(self)) + ')'
+        return type(self).__name__ + '(' + repr(str(self)) + ')'
 
     def __str__(self):
         """Get the canonical human-readable string of this hardware address."""
