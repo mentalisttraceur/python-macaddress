@@ -211,6 +211,25 @@ def test_str_alternatives(address):
 def test_copy_construction(address):
     Class = type(address)
     assert Class(address) == address
+    class ChildClass(Class):
+        pass
+    assert ChildClass(address) == address
+    class SiblingClass(HWAddress):
+        size = Class.size
+    assert SiblingClass(address) == address
+
+
+@given(_addresses())
+def test_copy_construction_wrong_size(address):
+    Class = type(address)
+    class ChildClass(Class):
+        size = Class.size + 1
+    with pytest.raises(TypeError):
+        ChildClass(address)
+    class SiblingClass(HWAddress):
+        size = Class.size + 1
+    with pytest.raises(TypeError):
+        SiblingClass(address)
 
 
 @given(_addresses(random_formats=1))
@@ -245,12 +264,10 @@ def test_parse_passthrough(address):
     assert parse(address, Class) == address
 
 
-@given(_addresses())
-def test_equality_with_subclass(address):
-    Class = type(address)
-    class Subclass(Class):
-        pass
-    assert Subclass(int(address)) != address
+@given(_addresses(), _addresses())
+def test_equality(address1, address2):
+    assert (address1 == address2) == (_bits(address1) == _bits(address2))
+    assert (address1 != address2) == (_bits(address1) != _bits(address2))
 
 
 @given(_addresses(), _addresses())

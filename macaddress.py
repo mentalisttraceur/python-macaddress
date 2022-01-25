@@ -94,7 +94,8 @@ class HWAddress:
             self._address = int.from_bytes(address, 'big') >> offset
         elif isinstance(address, str):
             self._address, _ = _parse(address, type(self))
-        elif isinstance(address, type(self)):
+        elif (isinstance(address, HWAddress)
+        and   type(address).size == type(self).size):
             self._address = address._address
         else:
             raise _type_error(address, type(self))
@@ -130,12 +131,11 @@ class HWAddress:
     def __eq__(self, other):
         """Check if this hardware address is equal to another.
 
-        They are equal if they are instances of the same class,
-        have the same size, and their addresses are equal.
+        Hardware addresses are equal if their raw bit strings are the same.
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
-        if not isinstance(other, type(self)) or type(self).size != type(other).size:
+        if type(self).size != type(other).size:
             return False
         return self._address == other._address
 
@@ -143,7 +143,7 @@ class HWAddress:
         """Check if this hardware address is not equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
-        if not isinstance(other, type(self)) or type(self).size != type(other).size:
+        if type(self).size != type(other).size:
             return True
         return self._address != other._address
 
@@ -188,7 +188,7 @@ class HWAddress:
 
     def __hash__(self):
         """Get the hash of this hardware address."""
-        return hash((type(self), self._address))
+        return hash((type(self).size, self._address))
 
 
 def _aligned_address_integers(address1, address2):
