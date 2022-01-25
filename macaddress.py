@@ -163,28 +163,28 @@ class HWAddress:
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this < that or (this == that and type(self).size < type(other).size)
+        return (this, type(self).size) < (that, type(other).size)
 
     def __le__(self, other):
         """Check if this hardware address is before or equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this < that or (this == that and type(self).size <= type(other).size)
+        return (this, type(self).size) <= (that, type(other).size)
 
     def __gt__(self, other):
         """Check if this hardware address is after another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this > that or (this == that and type(self).size > type(other).size)
+        return (this, type(self).size) > (that, type(other).size)
 
     def __ge__(self, other):
         """Check if this hardware address is after or equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this > that or (this == that and type(self).size >= type(other).size)
+        return (this, type(self).size) >= (that, type(other).size)
 
     def __hash__(self):
         """Get the hash of this hardware address."""
