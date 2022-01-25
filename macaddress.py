@@ -79,7 +79,7 @@ class HWAddress:
                 integer with a value that is negative or too big.
         """
         if isinstance(address, int):
-            overflow = 1 << self.size
+            overflow = 1 << type(self).size
             if address >= overflow:
                 raise _value_error(address, 'is too big for', type(self))
             if address < 0:
@@ -87,10 +87,10 @@ class HWAddress:
             self._address = address
         elif isinstance(address, bytes):
             length = len(address)
-            size_in_bytes = (self.size + 7) >> 3
+            size_in_bytes = (type(self).size + 7) >> 3
             if length != size_in_bytes:
                 raise _value_error(address, 'has wrong length for', type(self))
-            offset = (8 - self.size) & 7
+            offset = (8 - type(self).size) & 7
             self._address = int.from_bytes(address, 'big') >> offset
         elif isinstance(address, str):
             self._address, _ = _parse(address, type(self))
@@ -106,7 +106,7 @@ class HWAddress:
     def __str__(self):
         """Get the canonical human-readable string of this hardware address."""
         result = []
-        offset = (4 - self.size) & 3
+        offset = (4 - type(self).size) & 3
         unconsumed_address_value = self._address << offset
         for character in reversed(self.formats[0]):
             if character == 'x':
@@ -119,8 +119,8 @@ class HWAddress:
 
     def __bytes__(self):
         """Get the big-endian byte string of this hardware address."""
-        offset = (8 - self.size) & 7
-        size_in_bytes = (self.size + 7) >> 3
+        offset = (8 - type(self).size) & 7
+        size_in_bytes = (type(self).size + 7) >> 3
         return (self._address << offset).to_bytes(size_in_bytes, 'big')
 
     def __int__(self):
@@ -135,7 +135,7 @@ class HWAddress:
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
-        if not isinstance(other, type(self)) or self.size != other.size:
+        if not isinstance(other, type(self)) or type(self).size != type(other).size:
             return False
         return self._address == other._address
 
@@ -143,7 +143,7 @@ class HWAddress:
         """Check if this hardware address is not equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
-        if not isinstance(other, type(self)) or self.size != other.size:
+        if not isinstance(other, type(self)) or type(self).size != type(other).size:
             return True
         return self._address != other._address
 
@@ -163,28 +163,28 @@ class HWAddress:
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this < that or (this == that and self.size < other.size)
+        return this < that or (this == that and type(self).size < type(other).size)
 
     def __le__(self, other):
         """Check if this hardware address is before or equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this < that or (this == that and self.size <= other.size)
+        return this < that or (this == that and type(self).size <= type(other).size)
 
     def __gt__(self, other):
         """Check if this hardware address is after another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this > that or (this == that and self.size > other.size)
+        return this > that or (this == that and type(self).size > type(other).size)
 
     def __ge__(self, other):
         """Check if this hardware address is after or equal to another."""
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return this > that or (this == that and self.size >= other.size)
+        return this > that or (this == that and type(self).size >= type(other).size)
 
     def __hash__(self):
         """Get the hash of this hardware address."""
@@ -192,8 +192,8 @@ class HWAddress:
 
 
 def _aligned_address_integers(address1, address2):
-    size1 = address1.size
-    size2 = address2.size
+    size1 = type(address1).size
+    size2 = type(address2).size
     if size1 > size2:
         return (int(address1), int(address2) << (size1 - size2))
     else:
@@ -220,7 +220,7 @@ class _StartsWithOUI(HWAddress):
     @property
     def oui(self):
         """Get the OUI part of this hardware address."""
-        return OUI(int(self) >> (self.size - OUI.size))
+        return OUI(int(self) >> (type(self).size - OUI.size))
 
 
 class CDI32(_StartsWithOUI):
