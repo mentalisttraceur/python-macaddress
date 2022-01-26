@@ -102,7 +102,8 @@ def _address_classes(draw, random_formats=0):
     class_should_be_slotted = draw(booleans())
 
     class Class(HWAddress):
-        __slots__ = ()
+        if class_should_be_slotted:
+            __slots__ = ()
         size = size_in_bits
         formats = format_strings
         def __repr__(self):
@@ -113,12 +114,6 @@ def _address_classes(draw, random_formats=0):
                 slots=class_should_be_slotted,
                 address=self._address,
             )
-
-    if not class_should_be_slotted:
-        # Subclassing again without defining __slots__ is effectively
-        # like "removing" slots from the class we just made.
-        class Class(Class):
-            pass
 
     return Class
 
