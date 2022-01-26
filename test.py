@@ -308,6 +308,13 @@ def test_hash(address1, address2):
         assert hash(address1) == hash(address2)
 
 
+@given(_addresses())
+def test_repr(address):
+    Class = type(address)
+    del Class.__repr__
+    assert eval(repr(address)) == address
+
+
 def test_type_errors():
     class Dummy:
         pass
