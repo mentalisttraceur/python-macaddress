@@ -59,6 +59,8 @@ class HWAddress:
 
     __slots__ = ('_address',)
 
+    formats = ()
+
     def __init__(self, address):
         """Initialize the hardware address object with the address given.
 
@@ -92,7 +94,7 @@ class HWAddress:
                 raise _value_error(address, 'has wrong length for', type(self))
             offset = (8 - type(self).size) & 7
             self._address = int.from_bytes(address, 'big') >> offset
-        elif isinstance(address, str):
+        elif isinstance(address, str) and len(type(self).formats):
             self._address, _ = _parse(address, type(self))
         elif (isinstance(address, HWAddress)
         and   type(address).size == type(self).size):
@@ -102,14 +104,21 @@ class HWAddress:
 
     def __repr__(self):
         """Represent the hardware address as an unambiguous string."""
-        return type(self).__name__ + '(' + repr(str(self)) + ')'
+        try:
+            address = str(self)
+        except TypeError:
+            address = bytes(self)
+        return type(self).__name__ + '(' + repr(address) + ')'
 
     def __str__(self):
         """Get the canonical human-readable string of this hardware address."""
+        formats = type(self).formats
+        if not len(formats):
+            raise TypeError(type(self).__name__ + ' has no string format')
         result = []
         offset = (4 - type(self).size) & 3
         unconsumed_address_value = self._address << offset
-        for character in reversed(type(self).formats[0]):
+        for character in reversed(formats[0]):
             if character == 'x':
                 nibble = unconsumed_address_value & 0xf
                 result.append(_HEX_DIGITS[nibble])

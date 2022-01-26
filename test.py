@@ -315,6 +315,24 @@ def test_repr(address):
     assert eval(repr(address)) == address
 
 
+@given(_addresses())
+def test_repr_no_formats(address):
+    Class = type(address)
+    del Class.__repr__
+    del Class.formats
+    assert eval(repr(address)) == address
+
+
+@given(_addresses())
+def test_str_no_formats(address):
+    Class = type(address)
+    del Class.formats
+    with pytest.raises(TypeError):
+        str(address)
+    with pytest.raises(TypeError):
+        Class("")
+
+
 def test_type_errors():
     class Dummy:
         pass
