@@ -14,6 +14,9 @@ __all__ = (
 __version__ = '2.0.0'
 
 
+from functools import total_ordering as _total_ordering
+
+
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
 
 
@@ -39,6 +42,7 @@ def _value_error(value, error, *classes):
     return ValueError(repr(value) + ' ' + error + ' ' + class_names)
 
 
+@_total_ordering
 class HWAddress:
     """Base class for hardware addresses.
 
@@ -165,27 +169,6 @@ class HWAddress:
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
         return (this, type(self).size) < (that, type(other).size)
-
-    def __le__(self, other):
-        """Check if this hardware address is before or equal to another."""
-        if not isinstance(other, HWAddress):
-            return NotImplemented
-        this, that = _aligned_address_integers(self, other)
-        return (this, type(self).size) <= (that, type(other).size)
-
-    def __gt__(self, other):
-        """Check if this hardware address is after another."""
-        if not isinstance(other, HWAddress):
-            return NotImplemented
-        this, that = _aligned_address_integers(self, other)
-        return (this, type(self).size) > (that, type(other).size)
-
-    def __ge__(self, other):
-        """Check if this hardware address is after or equal to another."""
-        if not isinstance(other, HWAddress):
-            return NotImplemented
-        this, that = _aligned_address_integers(self, other)
-        return (this, type(self).size) >= (that, type(other).size)
 
     def __hash__(self):
         """Get the hash of this hardware address."""
