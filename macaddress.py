@@ -148,14 +148,6 @@ class HWAddress:
             return False
         return self._address == other._address
 
-    def __ne__(self, other):
-        """Check if this hardware address is not equal to another."""
-        if not isinstance(other, HWAddress):
-            return NotImplemented
-        if type(self).size != type(other).size:
-            return True
-        return self._address != other._address
-
     def __lt__(self, other):
         """Check if this hardware address is before another.
 
