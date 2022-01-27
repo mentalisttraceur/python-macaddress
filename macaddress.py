@@ -381,9 +381,9 @@ def _parse(string, *classes):
         raise ValueError('hardware address cannot be an empty string')
     candidates = {}
     for cls in classes:
-        for format in cls.formats:
-            if len(format) == length:
-                candidates.setdefault(format, cls)
+        for format_ in cls.formats:
+            if len(format_) == length:
+                candidates.setdefault(format_, cls)
     candidates = sorted(candidates.items())
     address = 0
     start = 0
