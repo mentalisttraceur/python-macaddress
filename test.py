@@ -1,3 +1,5 @@
+import weakref
+
 from hypothesis import given
 from hypothesis.strategies import (
     binary,
@@ -331,6 +333,11 @@ def test_str_no_formats(address):
         str(address)
     with pytest.raises(TypeError):
         Class("")
+
+
+@given(_addresses())
+def test_weak_reference(address):
+    weakref.ref(address)
 
 
 def test_type_errors():

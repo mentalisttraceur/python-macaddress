@@ -61,7 +61,7 @@ class HWAddress:
             "xx:xx:xx:xx:xx:xx", "xxxx.xxxx.xxxx", and "xxxxxxxxxxxx".
     """
 
-    __slots__ = ('_address',)
+    __slots__ = ('_address', '__weakref__')
 
     formats = ()
 
