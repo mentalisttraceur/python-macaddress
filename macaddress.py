@@ -254,19 +254,7 @@ class EUI48(_StartsWithOUI):
     )
 
 
-class MAC(EUI48):
-    """MAC address. A subclass of EUI48.
-
-    There is nothing wrong with using EUI48 for MAC addresses,
-    this is just provided as a convenience for the many users
-    who will look for "MAC address" without knowing about EUI.
-
-    But it is a subclass instead of just an alias because it
-    might be nice in some situations to distinguish in code
-    between MAC addresses and other uses of EUI-48.
-    """
-
-    __slots__ = ()
+MAC = EUI48
 
 
 class EUI60(_StartsWithOUI):
