@@ -41,11 +41,10 @@ Import:
 
     import macaddress
 
-Classes are provided for common hardware identifier
-types (``MAC``/``EUI48``, ``EUI64``, ``OUI``, and
-so on), as well as several less common ones. Others
-might be added later. You can define ones that you
-need in your code with just a few lines of code.
+Classes are provided for the common hardware identifier
+types: ``EUI48`` (also available as ``MAC``), ``EUI64``,
+``OUI``, and so on. If those aren't enough, you can
+easily define others with just a few lines of code.
 
 
 Parse or Validate String
@@ -55,19 +54,19 @@ When only one address type is valid:
 ````````````````````````````````````
 
 All provided classes support the standard and common formats.
-For example, the ``EUI48`` and ``MAC`` classes support the
-following formats:
+For example, the ``EUI48`` class supports the following
+formats:
 
 .. code:: python
 
-    >>> macaddress.MAC('01-23-45-67-89-ab')
-    MAC('01-23-45-67-89-AB')
-    >>> macaddress.MAC('01:23:45:67:89:ab')
-    MAC('01-23-45-67-89-AB')
-    >>> macaddress.MAC('0123.4567.89ab')
-    MAC('01-23-45-67-89-AB')
-    >>> macaddress.MAC('0123456789ab')
-    MAC('01-23-45-67-89-AB')
+    >>> macaddress.EUI48('01-23-45-67-89-ab')
+    EUI48('01-23-45-67-89-AB')
+    >>> macaddress.EUI48('01:23:45:67:89:ab')
+    EUI48('01-23-45-67-89-AB')
+    >>> macaddress.EUI48('0123.4567.89ab')
+    EUI48('01-23-45-67-89-AB')
+    >>> macaddress.EUI48('0123456789ab')
+    EUI48('01-23-45-67-89-AB')
 
 You can inspect what formats a hardware address class supports
 by looking at its ``formats`` attribute:
@@ -90,22 +89,33 @@ If the string does not match one of the formats, a
     ... except ValueError as error:
     ...     print(error)
     ... 
-    'foo bar' cannot be parsed as MAC
+    'foo bar' cannot be parsed as EUI48
 
 If you need to parse in a format that isn't supported,
-you can define a subclass and add the format:
+you can define a subclass and add the formats:
 
 .. code:: python
 
-    >>> class MACAllowsTrailingDelimiters(macaddress.MAC):
+    >>> class MAC(macaddress.MAC):
     ...     formats = macaddress.MAC.formats + (
     ...         'xx-xx-xx-xx-xx-xx-',
     ...         'xx:xx:xx:xx:xx:xx:',
     ...         'xxxx.xxxx.xxxx.',
     ...     )
     ... 
-    >>> MACAllowsTrailingDelimiters('01-02-03-04-05-06-')
-    MACAllowsTrailingDelimiters('01-02-03-04-05-06')
+    >>> MAC('01-02-03-04-05-06-')
+    MAC('01-02-03-04-05-06')
+
+    >>> class MAC(macaddress.MAC):
+    ...     formats = macaddress.MAC.formats + (
+    ...         'xxx-xxx-xxx-xxx',
+    ...         'xxx xxx xxx xxx',
+    ...         'xxx:xxx:xxx:xxx',
+    ...         'xxx.xxx.xxx.xxx',
+    ...     )
+    ... 
+    >>> MAC('012 345 678 9AB')
+    MAC('01-23-45-67-89-AB')
 
 When multiple address types are valid:
 ``````````````````````````````````````
@@ -115,15 +125,15 @@ which might be one of several classes:
 
 .. code:: python
 
-    >>> from macaddress import EUI48, EUI64, MAC, OUI
+    >>> from macaddress import EUI48, EUI64, OUI
 
-    >>> macaddress.parse('01:02:03', OUI, MAC)
+    >>> macaddress.parse('01:02:03', OUI, EUI48)
     OUI('01-02-03')
-    >>> macaddress.parse('01:02:03:04:05:06', OUI, MAC, EUI64)
-    MAC('01-02-03-04-05-06')
+    >>> macaddress.parse('01:02:03:04:05:06', OUI, EUI48, EUI64)
+    EUI48('01-02-03-04-05-06')
     >>> macaddress.parse('010203040506', EUI64, EUI48)
     EUI48('01-02-03-04-05-06')
-    >>> macaddress.parse('0102030405060708', EUI64, EUI48, OUI, MAC)
+    >>> macaddress.parse('0102030405060708', EUI64, EUI48, OUI)
     EUI64('01-02-03-04-05-06-07-08')
 
 If the input string cannot be parsed as any of
@@ -132,17 +142,17 @@ the given classes, a ``ValueError`` is raised:
 .. code:: python
 
     >>> try:
-    ...     macaddress.parse('01:23', MAC, OUI)
+    ...     macaddress.parse('01:23', EUI48, OUI)
     ... except ValueError as error:
     ...     print(error)
     ... 
-    '01:23' cannot be parsed as MAC or OUI
+    '01:23' cannot be parsed as EUI48 or OUI
     >>> try:
-    ...     macaddress.parse('01:23', MAC, OUI, EUI64)
+    ...     macaddress.parse('01:23', EUI48, OUI, EUI64)
     ... except ValueError as error:
     ...     print(error)
     ... 
-    '01:23' cannot be parsed as MAC, OUI, or EUI64
+    '01:23' cannot be parsed as EUI48, OUI, or EUI64
 
 Note that the message of the ``ValueError`` tries to be helpful
 for developers, but it is not localized, nor is its exact text
@@ -157,7 +167,7 @@ All ``macaddress`` classes can be constructed from raw bytes:
 .. code:: python
 
     >>> macaddress.MAC(b'abcdef')
-    MAC('61-62-63-64-65-66')
+    EUI48('61-62-63-64-65-66')
     >>> macaddress.OUI(b'abc')
     OUI('61-62-63')
 
@@ -170,7 +180,7 @@ If the byte string is the wrong size, a ``ValueError`` is raised:
     ... except ValueError as error:
     ...     print(error)
     ... 
-    b'\x01\x02\x03' has wrong length for MAC
+    b'\x01\x02\x03' has wrong length for EUI48
 
 
 Parse from Integers
@@ -181,7 +191,7 @@ All ``macaddress`` classes can be constructed from raw integers:
 .. code:: python
 
     >>> macaddress.MAC(0x010203ffeedd)
-    MAC('01-02-03-FF-EE-DD')
+    EUI48('01-02-03-FF-EE-DD')
     >>> macaddress.OUI(0x010203)
     OUI('01-02-03')
 
@@ -192,7 +202,7 @@ a different meaning depending on the class you use it with:
 .. code:: python
 
     >>> macaddress.MAC(1)
-    MAC('00-00-00-00-00-01')
+    EUI48('00-00-00-00-00-01')
     >>> macaddress.OUI(1)
     OUI('00-00-01')
 
@@ -217,12 +227,31 @@ Get as String
     >>> mac = macaddress.MAC('01-02-03-0A-0B-0C')
     >>> str(mac)
     '01-02-03-0A-0B-0C'
+
+For simple cases of changing the output format, you
+can just compose string operations:
+
+.. code:: python
+
     >>> str(mac).replace('-', ':')
     '01:02:03:0A:0B:0C'
     >>> str(mac).replace('-', '')
     '0102030A0B0C'
     >>> str(mac).lower()
     '01-02-03-0a-0b-0c'
+
+For more complicated cases, you can define a subclass
+with the desired output format as the first format:
+
+.. code:: python
+
+    >>> class MAC(macaddress.MAC):
+    ...     formats = (
+    ...         'xxx xxx xxx xxx',
+    ...     ) + macaddress.MAC.formats
+    ... 
+    >>> MAC(mac)
+    MAC('010 203 0A0 B0C')
 
 
 Get as Bytes
