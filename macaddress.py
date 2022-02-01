@@ -291,15 +291,15 @@ def parse(value, *classes):
 
     This lets you just write
 
-        address = hwaddress.parse(user_input, EUI64, EUI48, ...)
+        address = macaddress.parse(user_input, EUI64, EUI48, ...)
 
     instead of all of this:
 
         try:
-            address = hwaddress.EUI64(user_input)
+            address = macaddress.EUI64(user_input)
         except ValueError:
             try:
-                address = hwaddress.EUI48(user_input)
+                address = macaddress.EUI48(user_input)
             except ValueError:
                 ...
 
