@@ -69,13 +69,13 @@ class HWAddress:
         """Initialize the hardware address object with the address given.
 
         Arguments:
-            address: An ``int``, ``bytes``, or ``str`` representation
-                of the address, or another instance of the same class
-                of address. If a string, the ``formats`` attribute of
-                the class is used to parse it. If a byte string, it
-                is read in big-endian. If an integer, its value bytes
-                in big-endian are used as the address bytes. If an
-                instance of the same address class, its value is used.
+            address: An ``int``, ``bytes``, or ``str`` representation of
+                the address, or another instance of an address of the
+                same size. If a string, the ``formats`` attribute of the
+                class is used to parse it. If a byte string, it is read
+                in big-endian. If an integer, its value bytes in
+                big-endian are used as the address bytes. If an instance
+                of an address class, its value is used.
 
         Raises:
             TypeError: If ``address`` is not one of the valid types.
