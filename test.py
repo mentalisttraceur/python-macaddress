@@ -221,10 +221,12 @@ def test_copy_construction_wrong_size(address):
     Class = type(address)
     class ChildClass(Class):
         size = Class.size + 1
+        formats = ()
     with pytest.raises(TypeError):
         ChildClass(address)
     class SiblingClass(HWAddress):
         size = Class.size + 1
+        formats = ()
     with pytest.raises(TypeError):
         SiblingClass(address)
 

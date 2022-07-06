@@ -65,6 +65,20 @@ class HWAddress:
 
     formats = ()
 
+    def __init_subclass__(cls):
+        errors = []
+        for format_ in cls.formats:
+            nibbles_in_address = (cls.size + 3) >> 2
+            nibbles_in_format = sum(c == 'x' for c in format_)
+            if nibbles_in_format < nibbles_in_address:
+                errors.append(repr(format_) + ' is too short')
+            elif nibbles_in_format > nibbles_in_address:
+                errors.append(repr(format_) + ' is too long')
+        if errors:
+            name = cls.__name__
+            details = '; '.join(errors)
+            raise ValueError('bad formats for ' + name + ': ' + details)
+
     def __init__(self, address):
         """Initialize the hardware address object with the address given.
 
