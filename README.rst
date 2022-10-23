@@ -88,7 +88,7 @@ If the string does not match one of the formats, a
     ...     macaddress.MAC('foo bar')
     ... except ValueError as error:
     ...     print(error)
-    ... 
+    ...
     'foo bar' cannot be parsed as EUI48
 
 If you need to parse in a format that isn't supported,
@@ -102,7 +102,7 @@ you can define a subclass and add the formats:
     ...         'xx:xx:xx:xx:xx:xx:',
     ...         'xxxx.xxxx.xxxx.',
     ...     )
-    ... 
+    ...
     >>> MAC('01-02-03-04-05-06-')
     MAC('01-02-03-04-05-06')
 
@@ -113,7 +113,7 @@ you can define a subclass and add the formats:
     ...         'xxx:xxx:xxx:xxx',
     ...         'xxx.xxx.xxx.xxx',
     ...     )
-    ... 
+    ...
     >>> MAC('012 345 678 9AB')
     MAC('01-23-45-67-89-AB')
 
@@ -145,13 +145,13 @@ the given classes, a ``ValueError`` is raised:
     ...     macaddress.parse('01:23', EUI48, OUI)
     ... except ValueError as error:
     ...     print(error)
-    ... 
+    ...
     '01:23' cannot be parsed as EUI48 or OUI
     >>> try:
     ...     macaddress.parse('01:23', EUI48, OUI, EUI64)
     ... except ValueError as error:
     ...     print(error)
-    ... 
+    ...
     '01:23' cannot be parsed as EUI48, OUI, or EUI64
 
 Note that the message of the ``ValueError`` tries to be helpful
@@ -179,7 +179,7 @@ If the byte string is the wrong size, a ``ValueError`` is raised:
     ...     macaddress.MAC(b'\x01\x02\x03')
     ... except ValueError as error:
     ...     print(error)
-    ... 
+    ...
     b'\x01\x02\x03' has wrong length for EUI48
 
 
@@ -215,7 +215,7 @@ that you're trying to construct, a ``ValueError`` is raised:
     ...     macaddress.OUI(1_000_000_000)
     ... except ValueError as error:
     ...     print(error)
-    ... 
+    ...
     1000000000 is too big for OUI
 
 
@@ -249,7 +249,7 @@ with the desired output format as the first format:
     ...     formats = (
     ...         'xxx xxx xxx xxx',
     ...     ) + macaddress.MAC.formats
-    ... 
+    ...
     >>> MAC(mac)
     MAC('010 203 0A0 B0C')
 
