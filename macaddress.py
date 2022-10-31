@@ -20,6 +20,10 @@ from functools import total_ordering as _total_ordering
 _HEX_DIGITS = "0123456789ABCDEFabcdef"
 
 
+def _name(obj):
+    return type(obj).__name__
+
+
 def _class_names_in_proper_english(classes):
     class_names = [cls.__name__ for cls in classes]
     number_of_classes = len(classes)
@@ -112,13 +116,13 @@ class HWAddress:
             address = str(self)
         except TypeError:
             address = bytes(self)
-        return type(self).__name__ + '(' + repr(address) + ')'
+        return _name(self) + '(' + repr(address) + ')'
 
     def __str__(self):
         """Get the canonical human-readable string of this hardware address."""
         formats = type(self).formats
         if not len(formats):
-            raise TypeError(type(self).__name__ + ' has no string format')
+            raise TypeError(_name(self) + ' has no string format')
         result = []
         offset = (4 - type(self).size) & 3
         unconsumed_address_value = self._address << offset
