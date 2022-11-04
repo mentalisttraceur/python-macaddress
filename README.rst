@@ -39,7 +39,7 @@ Import:
 
 .. code:: python
 
-    import macaddress
+    >>> import macaddress
 
 Classes are provided for the common hardware identifier
 types: ``EUI48`` (also available as ``MAC``), ``EUI64``,
