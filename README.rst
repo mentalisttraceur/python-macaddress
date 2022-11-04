@@ -319,14 +319,14 @@ with the same bits next to each other:
 .. code:: python
 
     >>> some_values = [
-    ...     MAC('ff-ee-dd-01-02-03'),
-    ...     MAC('ff-ee-00-99-88-77'),
-    ...     MAC('ff-ee-dd-01-02-04'),
-    ...     OUI('ff-ee-dd'),
+    ...     macaddress.MAC('ff-ee-dd-01-02-03'),
+    ...     macaddress.MAC('ff-ee-00-99-88-77'),
+    ...     macaddress.MAC('ff-ee-dd-01-02-04'),
+    ...     macaddress.OUI('ff-ee-dd'),
     ... ]
     >>> for x in sorted(some_values):
     ...     print(x)
-    FF-EE-00-01-02-03
+    FF-EE-00-99-88-77
     FF-EE-DD
     FF-EE-DD-01-02-03
     FF-EE-DD-01-02-04
