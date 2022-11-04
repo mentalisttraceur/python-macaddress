@@ -153,7 +153,7 @@ class HWAddress:
         """Check if this hardware address is equal to another.
 
         Hardware addresses are equal if they are instances of the
-        same class, and their their raw bit strings are the same.
+        same class, and their raw bit strings are the same.
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
