@@ -117,10 +117,10 @@ class HWAddress:
     def __repr__(self):
         """Represent the hardware address as an unambiguous string."""
         try:
-            address = str(self)
+            address = repr(str(self))
         except TypeError:
-            address = bytes(self)
-        return _name(self) + '(' + repr(address) + ')'
+            address = _hex(int(self), type(self).size)
+        return _name(self) + '(' + address + ')'
 
     def __str__(self):
         """Get the canonical human-readable string of this hardware address."""
@@ -189,6 +189,17 @@ class HWAddress:
     def __hash__(self):
         """Get the hash of this hardware address."""
         return hash((type(self), int(self)))
+
+
+def _hex(integer, bits):
+    # Like the built-in function ``hex`` but pads the
+    # output to ``bits`` worth of hex characters.
+    #
+    # Examples:
+    #     (integer=5,      bits=32) -> '0x00000005'
+    #     (integer=0x1234, bits=32) -> '0x00001234'
+    #     (integer=0x1234, bits=16) -> '0x1234'
+    return '0x' + hex((1 << (bits+3)) | integer)[3:]
 
 
 class OUI(HWAddress):
