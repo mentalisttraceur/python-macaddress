@@ -268,21 +268,6 @@ def test_ordering(address1, address2):
     assert (address1 >= address2) == (_key(address1) >= _key(address2))
 
 
-@given(_addresses(), _addresses())
-def test_comparison_consistency(address1, address2):
-    eq = (address1 == address2)
-    ne = (address1 != address2)
-    lt = (address1 <  address2)
-    le = (address1 <= address2)
-    gt = (address1 >  address2)
-    ge = (address1 >= address2)
-    assert eq == (not ne)
-    assert lt == (not ge)
-    assert gt == (not le)
-    assert eq == (ge and le)
-    assert ne == (lt or gt)
-
-
 def _key(address):
     return (_bits(address), id(type(address)))
 
@@ -297,6 +282,21 @@ def _bits(address):
         address >>= 1
         size -= 1
     return ''.join(map(str, reversed(bits)))
+
+
+@given(_addresses(), _addresses())
+def test_comparison_consistency(address1, address2):
+    eq = (address1 == address2)
+    ne = (address1 != address2)
+    lt = (address1 <  address2)
+    le = (address1 <= address2)
+    gt = (address1 >  address2)
+    ge = (address1 >= address2)
+    assert eq == (not ne)
+    assert lt == (not ge)
+    assert gt == (not le)
+    assert eq == (ge and le)
+    assert ne == (lt or gt)
 
 
 @given(_addresses(), _addresses())
