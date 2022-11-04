@@ -74,12 +74,12 @@ class HWAddress:
 
         Arguments:
             address: An ``int``, ``bytes``, or ``str`` representation of
-                the address, or another instance of an address of the
-                same size. If a string, the ``formats`` attribute of the
-                class is used to parse it. If a byte string, it is read
-                in big-endian. If an integer, its value bytes in
-                big-endian are used as the address bytes. If an instance
-                of an address class, its value is used.
+                the address, or another instance of an address which is
+                either the same class, a subclass, or a superclass. If a
+                string, the ``formats`` attribute of the class is used
+                to parse it. If a byte string, it is read in big-endian.
+                If an integer, its value bytes in big-endian are used as
+                the address bytes.
 
         Raises:
             TypeError: If ``address`` is not one of the valid types.
@@ -104,8 +104,12 @@ class HWAddress:
             self._address = int.from_bytes(address, 'big') >> offset
         elif isinstance(address, str) and len(type(self).formats):
             self._address, _ = _parse(address, type(self))
+        # Subclass being "cast" to superclass:
+        elif isinstance(address, type(self)):
+            self._address = address._address
+        # Superclass being "cast" to subclass:
         elif (isinstance(address, HWAddress)
-        and   type(address).size == type(self).size):
+        and   isinstance(self, type(address))):
             self._address = address._address
         else:
             raise _type_error(address, type(self))
@@ -148,13 +152,12 @@ class HWAddress:
     def __eq__(self, other):
         """Check if this hardware address is equal to another.
 
-        Hardware addresses are equal if their raw bit strings are the same.
+        Hardware addresses are equal if they are instances of the
+        same class, and their their raw bit strings are the same.
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
-        if type(self).size != type(other).size:
-            return False
-        return self._address == other._address
+        return type(self) == type(other) and self._address == other._address
 
     def __lt__(self, other):
         """Check if this hardware address is before another.
@@ -172,11 +175,12 @@ class HWAddress:
         if not isinstance(other, HWAddress):
             return NotImplemented
         this, that = _aligned_address_integers(self, other)
-        return (this, type(self).size) < (that, type(other).size)
+        return ((this, type(self).size, id(type(self)))
+             <  (that, type(other).size, id(type(other))))
 
     def __hash__(self):
         """Get the hash of this hardware address."""
-        return hash((type(self).size, self._address))
+        return hash((type(self), self._address))
 
 
 def _aligned_address_integers(address1, address2):

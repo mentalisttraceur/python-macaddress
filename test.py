@@ -207,23 +207,19 @@ def test_copy_construction(address):
     assert Class(address) == address
     class ChildClass(Class):
         pass
-    assert ChildClass(address) == address
-    class SiblingClass(HWAddress):
-        size = Class.size
-    assert SiblingClass(address) == address
+    assert Class(ChildClass(address)) == address
 
 
 @given(_addresses())
-def test_copy_construction_wrong_size(address):
+def test_copy_construction_wrong_type(address):
     Class = type(address)
-    class ChildClass(Class):
-        size = Class.size + 1
-    with pytest.raises(TypeError):
-        ChildClass(address)
     class SiblingClass(HWAddress):
-        size = Class.size + 1
+        size = Class.size
     with pytest.raises(TypeError):
         SiblingClass(address)
+    address2 = SiblingClass(int(address))
+    with pytest.raises(TypeError):
+        Class(address2)
 
 
 @given(_addresses(random_formats=1))
@@ -260,16 +256,16 @@ def test_parse_passthrough(address):
 
 @given(_addresses(), _addresses())
 def test_equality(address1, address2):
-    assert (address1 == address2) == (_bits(address1) == _bits(address2))
-    assert (address1 != address2) == (_bits(address1) != _bits(address2))
+    assert (address1 == address2) == (_key(address1) == _key(address2))
+    assert (address1 != address2) == (_key(address1) != _key(address2))
 
 
 @given(_addresses(), _addresses())
 def test_ordering(address1, address2):
-    assert (address1 <  address2) == (_bits(address1) <  _bits(address2))
-    assert (address1 <= address2) == (_bits(address1) <= _bits(address2))
-    assert (address1 >  address2) == (_bits(address1) >  _bits(address2))
-    assert (address1 >= address2) == (_bits(address1) >= _bits(address2))
+    assert (address1 <  address2) == (_key(address1) <  _key(address2))
+    assert (address1 <= address2) == (_key(address1) <= _key(address2))
+    assert (address1 >  address2) == (_key(address1) >  _key(address2))
+    assert (address1 >= address2) == (_key(address1) >= _key(address2))
 
 
 @given(_addresses(), _addresses())
@@ -285,6 +281,10 @@ def test_comparison_consistency(address1, address2):
     assert gt == (not le)
     assert eq == (ge and le)
     assert ne == (lt or gt)
+
+
+def _key(address):
+    return (_bits(address), id(type(address)))
 
 
 def _bits(address):
