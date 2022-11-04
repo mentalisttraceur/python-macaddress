@@ -174,22 +174,21 @@ class HWAddress:
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
-        this, that = _aligned_address_integers(self, other)
-        return ((this, type(self).size, id(type(self)))
-             <  (that, type(other).size, id(type(other))))
+        class1 = type(self)
+        class2 = type(other)
+        size1 = class1.size
+        size2 = class2.size
+        bits1 = int(self)
+        bits2 = int(other)
+        if size1 > size2:
+            bits2 <<= size1 - size2
+        else:
+            bits1 <<= size2 - size1
+        return (bits1, size1, id(class1)) < (bits2, size2, id(class2))
 
     def __hash__(self):
         """Get the hash of this hardware address."""
         return hash((type(self), self._address))
-
-
-def _aligned_address_integers(address1, address2):
-    size1 = type(address1).size
-    size2 = type(address2).size
-    if size1 > size2:
-        return (int(address1), int(address2) << (size1 - size2))
-    else:
-        return (int(address1) << (size2 - size1), int(address2))
 
 
 class OUI(HWAddress):
