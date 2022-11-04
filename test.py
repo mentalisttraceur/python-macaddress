@@ -191,9 +191,6 @@ def test_str_alternatives(address):
     for format in formats:
         # Override instance formats to make this format the only
         # format, because it will stringify using the first one.
-        # Note: we have to overwrite `.formats` on the class
-        # because it cannot be overwritten on the instance if
-        # the class is slotted.
         Class.formats = (format,)
         # Format to string using the newly chosen format:
         formatted = str(address)
