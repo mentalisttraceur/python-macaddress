@@ -106,11 +106,11 @@ class HWAddress:
             self._address, _ = _parse(address, type(self))
         # Subclass being "cast" to superclass:
         elif isinstance(address, type(self)):
-            self._address = address._address
+            self._address = int(address)
         # Superclass being "cast" to subclass:
         elif (isinstance(address, HWAddress)
         and   isinstance(self, type(address))):
-            self._address = address._address
+            self._address = int(address)
         else:
             raise _type_error(address, type(self))
 
@@ -129,7 +129,7 @@ class HWAddress:
             raise TypeError(_name(self) + ' has no string format')
         result = []
         offset = (4 - type(self).size) & 3
-        unconsumed_address_value = self._address << offset
+        unconsumed_address_value = int(self) << offset
         for character in reversed(formats[0]):
             if character == 'x':
                 nibble = unconsumed_address_value & 0xf
@@ -143,7 +143,7 @@ class HWAddress:
         """Get the big-endian byte string of this hardware address."""
         offset = (8 - type(self).size) & 7
         size_in_bytes = (type(self).size + 7) >> 3
-        return (self._address << offset).to_bytes(size_in_bytes, 'big')
+        return (int(self) << offset).to_bytes(size_in_bytes, 'big')
 
     def __int__(self):
         """Get the raw integer value of this hardware address."""
@@ -157,7 +157,7 @@ class HWAddress:
         """
         if not isinstance(other, HWAddress):
             return NotImplemented
-        return type(self) == type(other) and self._address == other._address
+        return type(self) == type(other) and int(self) == int(other)
 
     def __lt__(self, other):
         """Check if this hardware address is before another.
@@ -188,7 +188,7 @@ class HWAddress:
 
     def __hash__(self):
         """Get the hash of this hardware address."""
-        return hash((type(self), self._address))
+        return hash((type(self), int(self)))
 
 
 class OUI(HWAddress):
