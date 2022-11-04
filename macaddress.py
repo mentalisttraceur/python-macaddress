@@ -11,7 +11,7 @@ __all__ = (
     'EUI48', 'EUI60', 'EUI64',
     'parse',
 )
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 
 from functools import total_ordering as _total_ordering
