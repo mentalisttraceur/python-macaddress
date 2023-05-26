@@ -215,6 +215,19 @@ class OUI(HWAddress):
         'xxxxxx',
     )
 
+class NIC(HWAddress):
+    """Network Interface Card"""
+
+    __slots__ = ()
+
+    size = 24
+
+    formats = (
+        'xx-xx-xx',
+        'xx:xx:xx',
+        'xxxxxx',
+    )
+
 
 class _StartsWithOUI(HWAddress):
     __slots__ = ()
@@ -223,6 +236,12 @@ class _StartsWithOUI(HWAddress):
     def oui(self):
         """Get the OUI part of this hardware address."""
         return OUI(int(self) >> (type(self).size - OUI.size))
+
+    @property
+    def nic(self):
+        """Get the NIC part of this hardware address."""
+        nic_size = self.size - OUI.size  # Calculate the size of the NIC based on the hardware address size
+        return NIC(int(self) & ((1 << nic_size) - 1))
 
 
 class CDI32(_StartsWithOUI):
